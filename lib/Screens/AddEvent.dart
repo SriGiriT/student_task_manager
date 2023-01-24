@@ -21,7 +21,9 @@ Future<DateTime> selectDateTime(BuildContext context) async {
 }
 
 class AddEvent extends StatefulWidget {
-  const AddEvent({super.key});
+  AddEvent({super.key});
+  var startDate = null;
+  var endDate = null;
 
   @override
   State<AddEvent> createState() => _AddEventState();
@@ -30,9 +32,6 @@ class AddEvent extends StatefulWidget {
 class _AddEventState extends State<AddEvent> {
   @override
   Widget build(BuildContext context) {
-    DateTime startDate = new DateTime.now();
-    DateTime endDate = new DateTime.now();
-
     return Scaffold(
       body: Center(
         child: Column(
@@ -50,40 +49,82 @@ class _AddEventState extends State<AddEvent> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   RoundedInputField(
-                      times: 0.4,
-                      hintText: "start date",
-                      icon: Icons.date_range,
-                      onChanged: (value) async {
-                        value =  await startDate.toString().substring(0, 10);
-                      },
-                      onTap: () async {
-                        final DateTime dateTime = await selectDateTime(context);
-                      
-                      
-                      
-                      
-                        if (dateTime != null) {
-                          setState(() {
-                            startDate = dateTime;
-                            print(startDate);
-                          });
-                        }
-                      }),
-                  RoundedInputField(
                     times: 0.4,
-                    hintText: "end date",
+                    hintText: widget.startDate == null
+                        ? "Select Date and Time"
+                        : widget.startDate.toString().substring(0, 10),
                     icon: Icons.date_range,
-                    onChanged: (value) async{
-                      value = await endDate.toString().substring(0, 10);
+                    onChanged: (value) async {
+                      // value =
+                      // await widget.startDate.toString().substring(0, 10);
                     },
                     onTap: () async {
-                      final DateTime? dateTime = await selectDateTime(context);
-                      if (dateTime != null) {
-                        setState(() {
-                          // print(picked);
-                          endDate = dateTime;
-                          print(endDate);
-                        });
+                      final DateTime? selectedDateTime = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2015),
+                        lastDate: DateTime(2100),
+                      );
+                      if (selectedDateTime != null) {
+                        final TimeOfDay? selectedTime = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.now(),
+                        );
+                        if (selectedTime != null) {
+                          setState(() {
+                            print(selectedDateTime.toString());
+                            widget.startDate = DateTime(
+                                selectedDateTime.year,
+                                selectedDateTime.month,
+                                selectedDateTime.day,
+                                selectedTime.hour,
+                                selectedTime.minute);
+                          });
+                        }
+                      }
+                    },
+
+                    // () async {
+                    //   final DateTime dateTime = await selectDateTime(context);
+                    //   if (dateTime != null) {
+                    //     setState(() {
+                    //       widget.startDate = dateTime;
+                    //       print(widget.startDate);
+                    //     });
+                    //   }
+                    // }
+                  ),
+                  RoundedInputField(
+                    times: 0.4,
+                    hintText: widget.endDate == null
+                        ? "End Date and Time"
+                        : widget.endDate.toString().substring(0, 10),
+                    icon: Icons.date_range,
+                    onChanged: (value) async {
+                      // value = await widget.endDate.toString().substring(0, 10);
+                    },
+                    onTap: () async {
+                      final DateTime? selectedDateTime = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2015),
+                        lastDate: DateTime(2100),
+                      );
+                      if (selectedDateTime != null) {
+                        final TimeOfDay? selectedTime = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.now(),
+                        );
+                        if (selectedTime != null) {
+                          setState(() {
+                            widget.endDate = DateTime(
+                                selectedDateTime.year,
+                                selectedDateTime.month,
+                                selectedDateTime.day,
+                                selectedTime.hour,
+                                selectedTime.minute);
+                          });
+                        }
                       }
                     },
                   ),

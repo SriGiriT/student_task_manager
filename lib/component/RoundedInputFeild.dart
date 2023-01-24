@@ -8,13 +8,12 @@ class RoundedInputField extends StatefulWidget {
   final ValueChanged<String> onChanged;
   final VoidCallback onTap;
   final double times;
-  const RoundedInputField({
-    required this.hintText,
-    required this.onTap,
-    required this.icon,
-    required this.onChanged,
-    required this.times
-  });
+  const RoundedInputField(
+      {required this.hintText,
+      required this.onTap,
+      required this.icon,
+      required this.onChanged,
+      required this.times});
 
   @override
   State<RoundedInputField> createState() => _RoundedInputFieldState();
@@ -27,6 +26,7 @@ class _RoundedInputFieldState extends State<RoundedInputField> {
       width: widget.times,
       child: TextField(
         onTap: widget.onTap,
+          // widget.onChanged;
         onChanged: widget.onChanged,
         cursorColor: kPrimaryColor,
         decoration: InputDecoration(
