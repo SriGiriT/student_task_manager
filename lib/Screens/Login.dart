@@ -1,14 +1,20 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:student_task_manager/Screens/Signup.dart';
 import 'package:student_task_manager/component/AlreadyHaveAccontCheck.dart';
 import 'package:student_task_manager/component/RoundedButton.dart';
 import 'package:student_task_manager/component/RoundedInputFeild.dart';
 import 'package:student_task_manager/component/RoundedPassword.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 // import 'package:flutter_svg/svg.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+  const LoginScreen();
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,8 +24,6 @@ class LoginScreen extends StatelessWidget {
 }
 
 class Body extends StatelessWidget {
-  const Body();
-
   @override
   Widget build(BuildContext context) {
     DateTime ne = new DateTime.now();
@@ -43,7 +47,7 @@ class Body extends StatelessWidget {
             RoundedInputField(
               times: 0.8,
               icon: Icons.person,
-              hintText: "Your Email",
+              hintText: "googleUser!.displayName!",
               onChanged: (value) {},
               onTap: () {},
             ),
@@ -84,11 +88,18 @@ class Background extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    final user = FirebaseAuth.instance.currentUser;
     return Scaffold(
         appBar: AppBar(
           title: Text('STM'),
           backgroundColor: Colors.blueGrey[600],
           centerTitle: true,
+          actions: [
+            TextButton(
+              onPressed: () {},
+              child: Text('Logout'),
+            )
+          ],
         ),
         body: Container(
           width: double.infinity,

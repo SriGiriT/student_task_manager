@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "418247244172",
+    "project_id": "student-task-managment",
+    "storage_bucket": "student-task-managment.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:418247244172:android:786ef7ed29743a86287ea9",
+        "android_client_info": {
+          "package_name": "com.example.student_task_manager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "418247244172-sju9jbcque7b92o8l5mnodcgsqk54lvq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0hgLYNR6aFebJ456krI21O8MQz247x-E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "418247244172-sju9jbcque7b92o8l5mnodcgsqk54lvq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,15 +1,25 @@
+
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:student_task_manager/Screens/Login.dart';
 import 'package:student_task_manager/Screens/Signup.dart';
 import 'package:student_task_manager/component/RoundedButton.dart';
 import 'package:student_task_manager/constant.dart';
-//import 'package:flutter_svg/svg.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
-class WelcomeScreen extends StatelessWidget {
+import '../component/google_sign_in.dart';
+
+
+class WelcomeScreenSignUp extends StatelessWidget {
+  const WelcomeScreenSignUp({
+    Key? key,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    // This size provide us total height and width of our screen
     return Background(
       child: SingleChildScrollView(
         child: Column(
@@ -29,35 +39,15 @@ class WelcomeScreen extends StatelessWidget {
                   fontSize: 20,
                   color: Colors.white),
             ),
-            SizedBox(height: size.height * 0.4),
-            SizedBox(height: size.height * 0.05),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.4),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.05),
             RoundedButton(
-              text: "LOGIN",
+              text: "LOGIN with Google",
               color: kButtonColor,
-              press: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return LoginScreen();
-                    },
-                  ),
-                );
-              },
-            ),
-            RoundedButton(
-              text: "SIGN UP",
-              color: kButtonColor,
-              textColor: Colors.white,
-              press: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return SignUpScreen();
-                    },
-                  ),
-                );
+              press: () async {
+                final provider =
+                    Provider.of<GoogleSignInProvider>(context, listen: false);
+                provider.googleLogin();
               },
             ),
           ],
@@ -72,7 +62,6 @@ class Background extends StatelessWidget {
   const Background({
     required this.child,
   });
-
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;

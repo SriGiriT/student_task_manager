@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
-String kURL = "https://229d-103-130-204-164.in.ngrok.io";
+String kURL = "http://localhost/8080";
 const kPrimaryColor = Colors.blue;
 const kPrimaryLightColor = Color.fromARGB(252, 255, 175, 95);
 const kButtonColor = Colors.black12;
