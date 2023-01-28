@@ -4,7 +4,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'package:student_task_manager/Screens/AddEvent.dart';
 import 'package:student_task_manager/Screens/EventScreen.dart';
-import 'package:student_task_manager/Screens/Login.dart';
 import 'package:student_task_manager/Screens/Welcome_signup.dart';
 import 'package:student_task_manager/Screens/profile.dart';
 import 'package:student_task_manager/component/google_sign_in.dart';
@@ -23,7 +22,6 @@ class _HomeScreenStudentState extends State<HomeScreenStudent> {
         body: StreamBuilder(
             stream: FirebaseAuth.instance.authStateChanges(),
             builder: (context, snapshot) {
-              final provider = Provider.of<GoogleSignInProvider>(context, listen: true);
               if (snapshot.connectionState == ConnectionState.waiting)
                 return Center(child: CircularProgressIndicator());
               else if (snapshot.hasError)
@@ -31,7 +29,7 @@ class _HomeScreenStudentState extends State<HomeScreenStudent> {
                   child: Text("Something went wrong!"),
                 );
               else if (snapshot.hasData) {
-                return Profile();
+                return EventScreen();
               } else
                 return WelcomeScreenSignUp();
             }),

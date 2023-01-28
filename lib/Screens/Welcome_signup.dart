@@ -1,13 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:student_task_manager/Screens/Login.dart';
-import 'package:student_task_manager/Screens/Signup.dart';
 import 'package:student_task_manager/component/RoundedButton.dart';
 import 'package:student_task_manager/constant.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../component/google_sign_in.dart';
 
 String selectedField = "Student";
@@ -24,7 +19,7 @@ class WelcomeScreenSignUp extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Text(
+            const Text(
               "STM",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
@@ -34,7 +29,6 @@ class WelcomeScreenSignUp extends StatelessWidget {
             ),
             // SizedBox(height: MediaQuery.of(context).size.height * 0.4),
             SizedBox(height: MediaQuery.of(context).size.height * 0.05),
-            GenderRadioButton(),
             SizedBox(height: MediaQuery.of(context).size.height * 0.05),
             RoundedButton(
               text: "LOGIN with Google",
@@ -61,7 +55,7 @@ class Background extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage("assets/images/hp2.png"),
           fit: BoxFit.cover,
