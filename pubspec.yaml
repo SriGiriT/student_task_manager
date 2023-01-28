@@ -43,7 +43,7 @@ dependencies:
   font_awesome_flutter: ^10.3.0
   provider: ^6.0.5
   firebase_core: ^2.4.1
-  flutter_appauth: ^4.2.1
+  # flutter_appauth: ^4.2.1
 
 
 

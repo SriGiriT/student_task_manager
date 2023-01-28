@@ -41,6 +41,7 @@ class _MyAppState extends State<MyApp> {
         '/signup': (context) => SignUpScreen(),
         '/event': (context) => EventScreen(),
         '/addEvent': (context) => AddEvent(),
+        'text': (context) => MyApp()
       },
     ),
   );

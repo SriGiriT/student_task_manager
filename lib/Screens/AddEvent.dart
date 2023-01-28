@@ -195,19 +195,21 @@ class _AddEventState extends State<AddEvent> {
             RoundedButton(
               text: "Add Event",
               press: () async {
+                String st = widget.startDate.toString();
+                String ed = widget.endDate.toString();
                 var body = {
                   'description': widget.description.toString(),
-                  'fromDate': widget.startDate.toString().substring(0, 19),
-                  'endDate': widget.endDate.toString().substring(0, 19),
+                  'fromDate': '${st.substring(0, 9)} IST ${st.substring(10, 19)}',
+                  'endDate': '${ed.substring(0, 9)} IST ${st.substring(10, 19)}',
                   'classCode':
                       '${widget.selectedYear} ${widget.selectedDept} ${widget.selectedClass}'
                 };
                 // var encodedBody = body.keys.map((key) => "$key=${body[key]}").join("&");
-                var encodedBody =
-                    body.keys.map((e) => '$e=${body[e]}').join("&");
-                http.post(Uri.parse('$kURL/event/new'), body: encodedBody);
+                // var encodedBody =
+                //     body.keys.map((e) => '$e=${body[e]}').join("&");
+                http.post(Uri.parse('$kURL/event/new'), body: body);
                 print(
-                    "$kURL/${widget.description}/${widget.startDate.toString().substring(0, 19)}/${widget.endDate.toString().substring(0, 19)}/${widget.selectedYear} ${widget.selectedDept} ${widget.selectedClass}");
+                    "$kURL/${widget.description}/${st.substring(0, 9)} IST ${st.substring(10, 19)}/${ed.substring(0, 9)} IST ${st.substring(10, 19)}/${widget.selectedYear} ${widget.selectedDept} ${widget.selectedClass}");
               },
             )
           ],

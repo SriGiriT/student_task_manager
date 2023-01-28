@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -15,6 +17,9 @@ class Profile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
+    final provider = Provider.of<GoogleSignInProvider>(context, listen: false);
+    String accessToken = provider.accessToken;
+    String idToken = provider.idToken;
     // GoogleSignInAuthentication auth = GoogleSignInProvider().auth;
     // print(auth.accessToken);
     // print(auth.idToken);
@@ -85,9 +90,6 @@ class Profile extends StatelessWidget {
               RoundedButton(
                 text: "eventScreen",
                 press: () async {
-                  http.post(Uri.parse('$kURL/event/post'), body:{
-                    
-                  });
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -96,6 +98,17 @@ class Profile extends StatelessWidget {
                       },
                     ),
                   );
+                },
+              ),
+              RoundedButton(
+                text: "eventScreen",
+                press: () async {
+                  var body = {
+                    'accessToken': accessToken.toString(),
+                    'idToken': idToken.toString()
+                  };
+                  print(accessToken + " | " + idToken);
+                  http.post(Uri.parse('$kURL/'), body: body);
                 },
               ),
             ],

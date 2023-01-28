@@ -9,6 +9,13 @@ class GoogleSignInProvider extends ChangeNotifier {
   GoogleSignInAuthentication? _auth;
   GoogleSignInAccount get user => _user!;
   GoogleSignInAuthentication get auth => _auth!;
+  String accessToken = "";
+  String idToken = "";
+  String get getAccessToken => accessToken;
+  String get getIdToken => idToken;
+  // String getTokens(){
+  //   return 
+  // }
   Future googleLogin() async {
     try {
       final googleUser = await googleSignIn.signIn();
@@ -16,8 +23,8 @@ class GoogleSignInProvider extends ChangeNotifier {
       _user = googleUser;
 
       final googleAuth = await googleUser.authentication;
-      print(googleAuth.accessToken);
-      print(googleAuth.idToken);
+      accessToken = googleAuth.accessToken!;
+      idToken = googleAuth.idToken!;
       _auth = googleAuth;
       final credential = GoogleAuthProvider.credential(
           accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
