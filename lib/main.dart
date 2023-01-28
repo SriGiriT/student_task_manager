@@ -36,7 +36,7 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
-        '/': (context) => HomeScreen(),
+        '/': (context) => HomeScreenStudent(),
         // '/login': (context) => LoginScreen(displayName: '', googleUserCircleAvatarnull: ,),
         '/signup': (context) => SignUpScreen(),
         '/event': (context) => EventScreen(),

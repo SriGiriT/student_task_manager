@@ -12,12 +12,12 @@ import 'package:student_task_manager/Screens/profile.dart';
 
 //import 'package:flutter_svg/svg.dart';
 
-class HomeScreenStudent extends StatefulWidget {
+class HomeScreenTeacher extends StatefulWidget {
   @override
-  State<HomeScreenStudent> createState() => _HomeScreenStudentState();
+  State<HomeScreenTeacher> createState() => _HomeScreenTeacherState();
 }
 
-class _HomeScreenStudentState extends State<HomeScreenStudent> {
+class _HomeScreenTeacherState extends State<HomeScreenTeacher> {
   @override
   Widget build(BuildContext context) => Scaffold(
         body: StreamBuilder(
@@ -31,7 +31,7 @@ class _HomeScreenStudentState extends State<HomeScreenStudent> {
                   child: Text("Something went wrong!"),
                 );
               else if (snapshot.hasData) {
-                return Profile();
+                return AddEvent();
               } else
                 return WelcomeScreenSignUp();
             }),

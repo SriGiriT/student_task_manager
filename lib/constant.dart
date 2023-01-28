@@ -5,11 +5,11 @@ String kURL = "https://a441-103-114-211-140.in.ngrok.io";
 const kPrimaryColor = Colors.blue;
 const kPrimaryLightColor = Color.fromARGB(252, 255, 175, 95);
 const kButtonColor = Colors.black12;
-Future<bool> onBackPressed(BuildContext context) {
+Future<bool> onBackPressed(BuildContext context, String text) {
   return showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      title: Text("Do you really want to Mark as done?"),
+      title: Text(text),
       actions: <Widget>[
         ElevatedButton(
           onPressed: () => Navigator.pop(context, false),

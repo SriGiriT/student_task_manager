@@ -1,5 +1,3 @@
-
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -9,9 +7,10 @@ import 'package:student_task_manager/Screens/Signup.dart';
 import 'package:student_task_manager/component/RoundedButton.dart';
 import 'package:student_task_manager/constant.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import '../component/google_sign_in.dart';
 
+String selectedField = "Student";
 
 class WelcomeScreenSignUp extends StatelessWidget {
   const WelcomeScreenSignUp({
@@ -28,18 +27,14 @@ class WelcomeScreenSignUp extends StatelessWidget {
             Text(
               "STM",
               style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 30,
-                  color: Colors.white),
+                fontWeight: FontWeight.bold,
+                fontSize: 48,
+                color: Color.fromARGB(255, 250, 175, 45),
+              ),
             ),
-            Text(
-              "",
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                  color: Colors.white),
-            ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.4),
+            // SizedBox(height: MediaQuery.of(context).size.height * 0.4),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+            GenderRadioButton(),
             SizedBox(height: MediaQuery.of(context).size.height * 0.05),
             RoundedButton(
               text: "LOGIN with Google",
@@ -47,7 +42,7 @@ class WelcomeScreenSignUp extends StatelessWidget {
               press: () async {
                 final provider =
                     Provider.of<GoogleSignInProvider>(context, listen: false);
-                provider.googleLogin();
+                provider.googleLogin(selectedField);
               },
             ),
           ],
@@ -96,6 +91,47 @@ class Background extends StatelessWidget {
           child,
         ],
       ),
+    );
+  }
+}
+
+class GenderRadioButton extends StatefulWidget {
+  @override
+  _GenderRadioButtonState createState() => _GenderRadioButtonState();
+}
+
+class _GenderRadioButtonState extends State<GenderRadioButton> {
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Radio(
+          value: 'Teacher',
+          groupValue: selectedField,
+          onChanged: (value) {
+            setState(() {
+              selectedField = value!;
+            });
+          },
+        ),
+        Text("Teacher"),
+        Text(
+          "   | ",
+          style: TextStyle(fontSize: 30),
+        ),
+        Radio(
+          value: 'Student',
+          groupValue: selectedField,
+          onChanged: (value) {
+            setState(() {
+              selectedField = value!;
+            });
+          },
+        ),
+        Text("Student"),
+      ],
     );
   }
 }

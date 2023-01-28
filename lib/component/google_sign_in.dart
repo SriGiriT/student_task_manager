@@ -13,15 +13,11 @@ class GoogleSignInProvider extends ChangeNotifier {
   String idToken = "";
   String get getAccessToken => accessToken;
   String get getIdToken => idToken;
-  // String getTokens(){
-  //   return 
-  // }
-  Future googleLogin() async {
+  Future googleLogin(String field) async {
     try {
       final googleUser = await googleSignIn.signIn();
       if (googleUser == null) return;
       _user = googleUser;
-
       final googleAuth = await googleUser.authentication;
       accessToken = googleAuth.accessToken!;
       idToken = googleAuth.idToken!;

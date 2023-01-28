@@ -2,10 +2,13 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:student_task_manager/component/RoundedButton.dart';
 import 'package:student_task_manager/component/RoundedInputFeild.dart';
 import 'package:student_task_manager/constant.dart';
 import 'package:http/http.dart' as http;
+
+import '../component/google_sign_in.dart';
 
 const List<String> yearList = ['I', 'II', 'III', 'IV', 'V'];
 const List<String> deptList = ['CSE', 'IT', 'ECE', 'EEE', 'MTECH'];
@@ -70,6 +73,22 @@ class _AddEventState extends State<AddEvent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+          title: Center(child: Text('Add Events')),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                final provider =
+                    Provider.of<GoogleSignInProvider>(context, listen: false);
+                provider.logout();
+              },
+              child: Text(
+                "Logout",
+                style: TextStyle(color: Colors.white),
+              ))
+            
+          ],
+        ),
       body: Center(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
