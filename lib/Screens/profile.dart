@@ -75,6 +75,7 @@ class Profile extends StatelessWidget {
               //   '${auth.accessToken!} ${auth.idToken!}',
               // )
               RoundedButton(
+                sizee: 0.7,
                 text: "addEvent",
                 press: () {
                   Navigator.push(
@@ -88,6 +89,7 @@ class Profile extends StatelessWidget {
                 },
               ),
               RoundedButton(
+                sizee: 0.7 ,
                 text: "eventScreen",
                 press: () async {
                   Navigator.push(
@@ -101,6 +103,7 @@ class Profile extends StatelessWidget {
                 },
               ),
               RoundedButton(
+                sizee: 0.7,
                 text: "eventScreen",
                 press: () async {
                   var body = {

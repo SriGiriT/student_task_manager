@@ -238,6 +238,7 @@ class _AddEventState extends State<AddEvent> {
                 height: 40,
               ),
               RoundedButton(
+                sizee: 0.7,
                 text: "Add Event",
                 press: () async {
                   String st = widget.startDate.toString();

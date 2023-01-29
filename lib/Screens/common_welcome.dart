@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:student_task_manager/Screens/Home.dart';
 import 'package:student_task_manager/Screens/home_screen_teacher.dart';
 import 'package:student_task_manager/Screens/profile.dart';
+import 'package:student_task_manager/constant.dart';
 
 import '../component/RoundedButton.dart';
 
@@ -27,13 +28,13 @@ class _CommonWelcomeState extends State<CommonWelcome> {
   _loadSelectedPage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      _selectedPage = prefs.getString("selected_pa");
+      _selectedPage = prefs.getString("selected_page1");
     });
   }
 
   _saveSelectedPage(String page) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString("selected_pa", page);
+    prefs.setString("selected_page1", page);
   }
 
   @override
@@ -50,22 +51,27 @@ class _CommonWelcomeState extends State<CommonWelcome> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               RoundedButton(
-                text: "Teacher",
-                press: () {
-                  _saveSelectedPage("teacher");
-                  setState(() {
-                    _selectedPage = "teacher";
-                  });
-                },
-              ),
+                  sizee: 1,
+                  text: "Teacher",
+                  press: () async {
+                    if (await onBackPressed(
+                        context, "Are you sure want to select Teacher")) {
+                      _saveSelectedPage("teacher");
+                      setState(() {
+                        _selectedPage = "teacher";
+                      });
+                    }
+                  }),
               RoundedButton(
+                sizee: 1,
                 text: "Student",
                 press: () async {
-                  _saveSelectedPage("student");
-                  setState(() {
-                    _selectedPage = "student";
-                  });
-                },
+                  if(await onBackPressed(context, "Are you sure want to select Student"))
+                    _saveSelectedPage("student");
+                    setState(() {
+                      _selectedPage = "student";
+                    });
+                }
               ),
             ],
           ),
@@ -78,4 +84,3 @@ class _CommonWelcomeState extends State<CommonWelcome> {
     }
   }
 }
-

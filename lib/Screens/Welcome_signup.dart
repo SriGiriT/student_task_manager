@@ -31,6 +31,7 @@ class WelcomeScreenSignUp extends StatelessWidget {
             SizedBox(height: MediaQuery.of(context).size.height * 0.05),
             SizedBox(height: MediaQuery.of(context).size.height * 0.05),
             RoundedButton(
+              sizee: 0.6,
               text: "LOGIN with Google",
               color: kButtonColor,
               press: () async {

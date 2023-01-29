@@ -36,10 +36,9 @@ class _MyAppState extends State<MyApp> {
         child: MaterialApp(
           theme: ThemeData.light(),
           debugShowCheckedModeBanner: false,
-          initialRoute: '/eventte',
+          initialRoute: '/',
           routes: {
             '/': (context) => CommonWelcome(),
-            // '/login': (context) => LoginScreen(displayName: '', googleUserCircleAvatarnull: ,),
             '/event': (context) => EventScreen(),
             '/eventte':(context) => EventScreenTeacher(),
             '/addEvent': (context) => AddEvent(),
