@@ -27,44 +27,48 @@ class _CommonWelcomeState extends State<CommonWelcome> {
   _loadSelectedPage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      _selectedPage = prefs.getString("selected_page");
+      _selectedPage = prefs.getString("selected_pa");
     });
   }
 
   _saveSelectedPage(String page) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString("selected_page", page);
+    prefs.setString("selected_pa", page);
   }
 
   @override
   Widget build(BuildContext context) {
     if (_selectedPage == null) {
       return Scaffold(
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            RoundedButton(
-              text: "Teacher",
-              press: () {
-                _saveSelectedPage("teacher");
-                setState(() {
-                  _selectedPage = "teacher";
-                });
-              },
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            RoundedButton(
-              text: "Student",
-              press: () async {
-                _saveSelectedPage("student");
-                setState(() {
-                  _selectedPage = "student";
-                });
-              },
-            ),
-          ],
+        appBar: AppBar(
+          title: Text("Welcome"),
+          centerTitle: true,
+        ),
+        body: Container(
+          color: Colors.blueGrey.shade900,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              RoundedButton(
+                text: "Teacher",
+                press: () {
+                  _saveSelectedPage("teacher");
+                  setState(() {
+                    _selectedPage = "teacher";
+                  });
+                },
+              ),
+              RoundedButton(
+                text: "Student",
+                press: () async {
+                  _saveSelectedPage("student");
+                  setState(() {
+                    _selectedPage = "student";
+                  });
+                },
+              ),
+            ],
+          ),
         ),
       );
     } else if (_selectedPage == "teacher") {

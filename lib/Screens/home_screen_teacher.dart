@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:student_task_manager/Screens/AddEvent.dart';
 import 'package:student_task_manager/Screens/EventScreen.dart';
 import 'package:student_task_manager/Screens/Welcome_signup.dart';
+import 'package:student_task_manager/Screens/event_screen_teacher.dart';
 import 'package:student_task_manager/Screens/profile.dart';
 import 'package:student_task_manager/component/google_sign_in.dart';
 import 'package:student_task_manager/Screens/profile.dart';
@@ -29,7 +30,7 @@ class _HomeScreenTeacherState extends State<HomeScreenTeacher> {
                   child: Text("Something went wrong!"),
                 );
               else if (snapshot.hasData) {
-                return AddEvent();
+                return EventScreenTeacher();
               } else
                 return WelcomeScreenSignUp();
             }),

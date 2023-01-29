@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:student_task_manager/Screens/common_welcome.dart';
+import 'package:student_task_manager/Screens/event_screen_teacher.dart';
 import 'package:student_task_manager/component/google_sign_in.dart';
 import 'package:student_task_manager/constant.dart';
 import 'package:student_task_manager/Screens/EventScreen.dart';
@@ -35,11 +36,12 @@ class _MyAppState extends State<MyApp> {
         child: MaterialApp(
           theme: ThemeData.light(),
           debugShowCheckedModeBanner: false,
-          initialRoute: '/',
+          initialRoute: '/eventte',
           routes: {
             '/': (context) => CommonWelcome(),
             // '/login': (context) => LoginScreen(displayName: '', googleUserCircleAvatarnull: ,),
             '/event': (context) => EventScreen(),
+            '/eventte':(context) => EventScreenTeacher(),
             '/addEvent': (context) => AddEvent(),
             'text': (context) => MyApp()
           },

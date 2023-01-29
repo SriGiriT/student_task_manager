@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:student_task_manager/component/RoundedButton.dart';
 import 'package:student_task_manager/component/RoundedInputFeild.dart';
+import 'package:student_task_manager/component/TextFieldContainer.dart';
 import 'package:student_task_manager/constant.dart';
 import 'package:http/http.dart' as http;
 
@@ -51,12 +52,16 @@ class _AddEventState extends State<AddEvent> {
     for (String currency in yearList) {
       var newItem = DropdownMenuItem(
         value: currency,
-        child: Text(currency),
+        child: Container(
+          margin: EdgeInsets.all(5),
+          width: 50,
+          child: Text(currency, style: kButtonTextStyle,)),
       );
       dropdownItems.add(newItem);
     }
 
     return DropdownButton<String>(
+        dropdownColor: kPrimaryColor,
         icon: Icon(Icons.arrow_drop_down),
         iconSize: 24,
         elevation: 16,
@@ -72,6 +77,7 @@ class _AddEventState extends State<AddEvent> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
           title: Center(child: Text('Add Events')),
@@ -89,149 +95,170 @@ class _AddEventState extends State<AddEvent> {
             
           ],
         ),
-      body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            RoundedInputField(
-              times: 0.8,
-              hintText: "description",
-              onChanged: (value) {
-                widget.description = value;
-              },
-              icon: Icons.description,
-              onTap: () {},
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                RoundedInputField(
-                  times: 0.4,
-                  hintText: widget.startDate == null
-                      ? "Select Date and Time"
-                      : widget.startDate.toString().substring(0, 19),
-                  icon: Icons.date_range,
-                  onChanged: (value) async {
-                    // value =
-                    // await widget.startDate.toString().substring(0, 10);
-                  },
-                  onTap: () async {
-                    final DateTime? selectedDateTime = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(2015),
-                      lastDate: DateTime(2100),
-                    );
-                    if (selectedDateTime != null) {
-                      final TimeOfDay? selectedTime = await showTimePicker(
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children:  [
+              SizedBox(
+                height: 150,
+              ),
+              RoundedInputField(
+                isDes: true,
+                times: 0.9,
+                hintText: "Description",
+                onChanged: (value) {
+                  widget.description = value;
+                },
+                icon: Icons.description,
+                onTap: () {},
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  RoundedInputField(
+                    isDes: false,
+                    times: 0.45,
+                    hintText: widget.startDate == null
+                        ? "Select Date and Time"
+                        : widget.startDate.toString().substring(0, 19),
+                    icon: Icons.date_range,
+                    onChanged: (value) async {
+                      // value =
+                      // await widget.startDate.toString().substring(0, 10);
+                    },
+                    onTap: () async {
+                      final DateTime? selectedDateTime = await showDatePicker(
                         context: context,
-                        initialTime: TimeOfDay.now(),
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2015),
+                        lastDate: DateTime(2100),
                       );
-                      if (selectedTime != null) {
-                        setState(() {
-                          print(selectedDateTime.toString());
-                          widget.startDate = DateTime(
-                              selectedDateTime.year,
-                              selectedDateTime.month,
-                              selectedDateTime.day,
-                              selectedTime.hour,
-                              selectedTime.minute);
-                        });
+                      if (selectedDateTime != null) {
+                        final TimeOfDay? selectedTime = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.now(),
+                        );
+                        if (selectedTime != null) {
+                          setState(() {
+                            print(selectedDateTime.toString());
+                            widget.startDate = DateTime(
+                                selectedDateTime.year,
+                                selectedDateTime.month,
+                                selectedDateTime.day,
+                                selectedTime.hour,
+                                selectedTime.minute);
+                          });
+                        }
                       }
-                    }
-                  },
-                ),
-                RoundedInputField(
-                  times: 0.4,
-                  hintText: widget.endDate == null
-                      ? "End Date and Time"
-                      : widget.endDate.toString().substring(0, 19),
-                  icon: Icons.date_range,
-                  onChanged: (value) async {
-                    // value = await widget.endDate.toString().substring(0, 10);
-                  },
-                  onTap: () async {
-                    final DateTime? selectedDateTime = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(2015),
-                      lastDate: DateTime(2100),
-                    );
-                    if (selectedDateTime != null) {
-                      final TimeOfDay? selectedTime = await showTimePicker(
+                    },
+                  ),
+                  RoundedInputField(
+                    isDes: false,
+                    times: 0.45,
+                    hintText: widget.endDate == null
+                        ? "End Date and Time"
+                        : widget.endDate.toString().substring(0, 19),
+                    icon: Icons.date_range_outlined,
+                    onChanged: (value) async {
+                      // value = await widget.endDate.toString().substring(0, 10);
+                    },
+                    onTap: () async {
+                      final DateTime? selectedDateTime = await showDatePicker(
                         context: context,
-                        initialTime: TimeOfDay.now(),
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2015),
+                        lastDate: DateTime(2100),
                       );
-                      if (selectedTime != null) {
-                        setState(() {
-                          widget.endDate = DateTime(
-                              selectedDateTime.year,
-                              selectedDateTime.month,
-                              selectedDateTime.day,
-                              selectedTime.hour,
-                              selectedTime.minute);
-                        });
+                      if (selectedDateTime != null) {
+                        final TimeOfDay? selectedTime = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.now(),
+                        );
+                        if (selectedTime != null) {
+                          setState(() {
+                            widget.endDate = DateTime(
+                                selectedDateTime.year,
+                                selectedDateTime.month,
+                                selectedDateTime.day,
+                                selectedTime.hour,
+                                selectedTime.minute);
+                          });
+                        }
                       }
-                    }
-                  },
+                    },
+                  ),
+                ],
+              ),
+              TextFieldContainer(
+                width: 0.9,
+                isDescription: false,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    dropDown(
+                      yearList,
+                      widget.selectedYear,
+                      (value) {
+                        setState(() {
+                          widget.selectedYear = value!;
+                        });
+                      },
+                    ),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    dropDown(
+                      deptList,
+                      widget.selectedDept,
+                      (value) {
+                        setState(() {
+                          widget.selectedDept = value!;
+                        });
+                      },
+                    ),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    dropDown(
+                      classList,
+                      widget.selectedClass,
+                      (value) {
+                        setState(() {
+                          widget.selectedClass = value!;
+                        });
+                      },
+                    )
+                  ],
                 ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                dropDown(
-                  yearList,
-                  widget.selectedYear,
-                  (value) {
-                    setState(() {
-                      widget.selectedYear = value!;
-                    });
-                  },
-                ),
-                dropDown(
-                  deptList,
-                  widget.selectedDept,
-                  (value) {
-                    setState(() {
-                      widget.selectedDept = value!;
-                    });
-                  },
-                ),
-                dropDown(
-                  classList,
-                  widget.selectedClass,
-                  (value) {
-                    setState(() {
-                      widget.selectedClass = value!;
-                    });
-                  },
-                )
-              ],
-            ),
-            RoundedButton(
-              text: "Add Event",
-              press: () async {
-                String st = widget.startDate.toString();
-                String ed = widget.endDate.toString();
-                var body = {
-                  'description': widget.description.toString(),
-                  'fromDate': '${st.substring(0, 9)} IST ${st.substring(10, 19)}',
-                  'endDate': '${ed.substring(0, 9)} IST ${st.substring(10, 19)}',
-                  'classCode':
-                      '${widget.selectedYear} ${widget.selectedDept} ${widget.selectedClass}'
-                };
-                // var encodedBody = body.keys.map((key) => "$key=${body[key]}").join("&");
-                // var encodedBody =
-                //     body.keys.map((e) => '$e=${body[e]}').join("&");
-                http.post(Uri.parse('$kURL/event/new'), body: body);
-                print(
-                    "$kURL/${widget.description}/${st.substring(0, 9)} IST ${st.substring(10, 19)}/${ed.substring(0, 9)} IST ${st.substring(10, 19)}/${widget.selectedYear} ${widget.selectedDept} ${widget.selectedClass}");
-              },
-            )
-          ],
+              ),
+              SizedBox(
+                height: 40,
+              ),
+              RoundedButton(
+                text: "Add Event",
+                press: () async {
+                  String st = widget.startDate.toString();
+                  String ed = widget.endDate.toString();
+                  var body = {
+                    'description': widget.description.toString(),
+                    'fromDate': '${st.substring(0, 9)} IST ${st.substring(10, 19)}',
+                    'endDate': '${ed.substring(0, 9)} IST ${st.substring(10, 19)}',
+                    'classCode':
+                        '${widget.selectedYear} ${widget.selectedDept} ${widget.selectedClass}'
+                  };
+                  // var encodedBody = body.keys.map((key) => "$key=${body[key]}").join("&");
+                  // var encodedBody =
+                  //     body.keys.map((e) => '$e=${body[e]}').join("&");
+                  http.post(Uri.parse('$kURL/event/new'), body: body);
+                  print(
+                      "$kURL/${widget.description}/${st.substring(0, 9)} IST ${st.substring(10, 19)}/${ed.substring(0, 9)} IST ${st.substring(10, 19)}/${widget.selectedYear} ${widget.selectedDept} ${widget.selectedClass}");
+                },
+              )
+            ],
+          ),
         ),
       ),
     );
