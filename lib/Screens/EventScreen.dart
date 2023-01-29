@@ -79,7 +79,7 @@ class _EventScreenState extends State<EventScreen> {
                                   _data = fetchData();
                                   http.post(
                                     Uri.parse(
-                                        "$kURL/event/update/20eucs147/${snapshot.data![index]['eventId']}")
+                                        "$kURL/student/update/20eucs147/${snapshot.data![index]['eventId']}")
                                   );
                                 }
                                 );
@@ -104,7 +104,7 @@ class _EventScreenState extends State<EventScreen> {
 
   Future<List<dynamic>> fetchData() async {
     final response = await http.post(Uri.parse(
-        '$kURL/event/get/20eucs147'));
+        '$kURL/student/get/20eucs147'));
     print(response.body);
     if (response.statusCode == 200) {
       // If the call to the server was successful, parse the JSON

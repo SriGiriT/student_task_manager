@@ -253,7 +253,7 @@ class _AddEventState extends State<AddEvent> {
                   // var encodedBody = body.keys.map((key) => "$key=${body[key]}").join("&");
                   // var encodedBody =
                   //     body.keys.map((e) => '$e=${body[e]}').join("&");
-                  http.post(Uri.parse('$kURL/event/new'), body: body);
+                  http.post(Uri.parse('$kURL/teacher/event/new'), body: body);
                   print(
                       "$kURL/${widget.description}/${st.substring(0, 9)} IST ${st.substring(10, 19)}/${ed.substring(0, 9)} IST ${st.substring(10, 19)}/${widget.selectedYear} ${widget.selectedDept} ${widget.selectedClass}");
                 },

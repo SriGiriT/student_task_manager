@@ -28,13 +28,13 @@ class _CommonWelcomeState extends State<CommonWelcome> {
   _loadSelectedPage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      _selectedPage = prefs.getString("selected_page1");
+      _selectedPage = prefs.getString("selected_page11");
     });
   }
 
   _saveSelectedPage(String page) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString("selected_page1", page);
+    prefs.setString("selected_page11", page);
   }
 
   @override

@@ -83,7 +83,7 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
                                   setState(() {
                                     _data = fetchData();
                                     http.post(Uri.parse(
-                                        "$kURL/event/update/20eucs147/${snapshot.data![index]['eventId']}"));
+                                        "$kURL/teacher/event/stats-list/${snapshot.data![index]['eventId']}/III CSE C")).then((value) => print(value),);
                                   });
                                 }
                               },
@@ -119,7 +119,7 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
   }
 
   Future<List<dynamic>> fetchData() async {
-    final response = await http.post(Uri.parse('$kURL/event/get/20eucs147'));
+    final response = await http.post(Uri.parse('$kURL/teacher/events/pending/ramesh'));
     print(response.body);
     if (response.statusCode == 200) {
       // If the call to the server was successful, parse the JSON
