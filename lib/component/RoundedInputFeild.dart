@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:student_task_manager/Screens/common_welcome.dart';
 import 'package:student_task_manager/constant.dart';
 import 'package:student_task_manager/component/TextFieldContainer.dart';
 
@@ -33,6 +34,7 @@ class _RoundedInputFieldState extends State<RoundedInputField> {
         // widget.onChanged;
         onChanged: widget.onChanged,
         cursorColor: kPrimaryColor,
+        maxLines: widget.isDes ? 10 : 1,
         decoration: InputDecoration(
           hintStyle: TextStyle(color: Colors.white),
           icon: Icon(

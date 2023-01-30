@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:student_task_manager/component/RoundedButton.dart';
@@ -40,6 +41,7 @@ class AddEvent extends StatefulWidget {
   String selectedDept = 'CSE';
   String selectedClass = 'C';
   String description = "";
+  String title = "";
 
   @override
   State<AddEvent> createState() => _AddEventState();
@@ -53,9 +55,12 @@ class _AddEventState extends State<AddEvent> {
       var newItem = DropdownMenuItem(
         value: currency,
         child: Container(
-          margin: EdgeInsets.all(5),
-          width: 50,
-          child: Text(currency, style: kButtonTextStyle,)),
+            margin: EdgeInsets.all(5),
+            width: 50,
+            child: Text(
+              currency,
+              style: kButtonTextStyle,
+            )),
       );
       dropdownItems.add(newItem);
     }
@@ -75,14 +80,15 @@ class _AddEventState extends State<AddEvent> {
         onChanged: fun);
   }
 
+  final user = FirebaseAuth.instance.currentUser;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-          title: Center(child: Text('Add Events')),
-          actions: <Widget>[
-            TextButton(
+        title: Center(child: Text('Add Events')),
+        actions: <Widget>[
+          TextButton(
               onPressed: () {
                 final provider =
                     Provider.of<GoogleSignInProvider>(context, listen: false);
@@ -92,18 +98,26 @@ class _AddEventState extends State<AddEvent> {
                 "Logout",
                 style: TextStyle(color: Colors.white),
               ))
-            
-          ],
-        ),
+        ],
+      ),
       body: SingleChildScrollView(
         child: Center(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
-            children:  [
+            children: [
               SizedBox(
                 height: 150,
               ),
+              RoundedInputField(
+                  hintText: "Title",
+                  onTap: () {},
+                  icon: Icons.title,
+                  onChanged: (value) {
+                    widget.title = value;
+                  },
+                  times: 0.9,
+                  isDes: false),
               RoundedInputField(
                 isDes: true,
                 times: 0.9,
@@ -244,9 +258,12 @@ class _AddEventState extends State<AddEvent> {
                   String st = widget.startDate.toString();
                   String ed = widget.endDate.toString();
                   var body = {
+                    'title': widget.title,
                     'description': widget.description.toString(),
-                    'fromDate': '${st.substring(0, 9)} IST ${st.substring(10, 19)}',
-                    'endDate': '${ed.substring(0, 9)} IST ${st.substring(10, 19)}',
+                    'fromDate':
+                        '${st.substring(0, 10)} IST ${st.substring(11, 19)}',
+                    'endDate':
+                        '${ed.substring(0, 10)} IST ${ed.substring(11, 19)}',
                     'classCode':
                         '${widget.selectedYear} ${widget.selectedDept} ${widget.selectedClass}'
                   };
@@ -255,7 +272,8 @@ class _AddEventState extends State<AddEvent> {
                   //     body.keys.map((e) => '$e=${body[e]}').join("&");
                   http.post(Uri.parse('$kURL/teacher/event/new'), body: body);
                   print(
-                      "$kURL/${widget.description}/${st.substring(0, 9)} IST ${st.substring(10, 19)}/${ed.substring(0, 9)} IST ${st.substring(10, 19)}/${widget.selectedYear} ${widget.selectedDept} ${widget.selectedClass}");
+                      "$kURL/${widget.title}/${widget.description}/${st.substring(0, 10)} IST ${st.substring(11, 19)}/${ed.substring(0, 10)} IST ${ed.substring(11, 19)}/${widget.selectedYear} ${widget.selectedDept} ${widget.selectedClass}");
+                  Navigator.pop(context);
                 },
               )
             ],
