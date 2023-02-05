@@ -19,6 +19,7 @@ class EventScreenTeacher extends StatefulWidget {
 class _EventScreenTeacherState extends State<EventScreenTeacher> {
   late Future<List<dynamic>> _data;
   List<Map<String, dynamic>> reports = [];
+  Map<String, int> reports_stats = {};
   final user = FirebaseAuth.instance.currentUser;
   void fetchReports(String path) async {
     final response = await http.post(Uri.parse(path));
@@ -42,6 +43,33 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
         //     .toList();
         // print(reports.runtimeType);
         // print(reports.toString());
+      });
+    } else {
+      print("error");
+    }
+  }
+
+  void fetchReportsStats(String path) async {
+    final response = await http.post(Uri.parse(path));
+    if (response.statusCode == 200) {
+      setState(() {
+        print(jsonDecode(response.body));
+        print(jsonDecode(response.body).runtimeType);
+        reports_stats = {};
+        var dat = jsonDecode(response.body).runtimeType;
+        // jsonDecode(response.body).forEach((key, value)){
+        //   reports_stats[key] = value;
+        // }
+        for (var item in jsonDecode(response.body)) {
+          print(item.runtimeType);
+          if (item is Map) {
+            Map<String, dynamic> newMap = {};
+            item.forEach((key, value) {
+              newMap[key] = value;
+            });
+            reports.add(newMap);
+          }
+        }
       });
     } else {
       print("error");
@@ -100,63 +128,88 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
                   return ListView.builder(
                     itemCount: snapshot.data!.length,
                     itemBuilder: (context, index) {
-                      return Container(
-                        padding: EdgeInsets.all(16),
-                        margin: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: kPrimaryLightColor,
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Column(
-                              children: [
-                                Text(
-                                    snapshot.data![index]['eventId'].toString(),
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                                Text(snapshot.data![index]['description']),
-                              ],
+                      return GestureDetector(
+                        onTap: () {
+                          snapshot.data![index].runtimeType;
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (context) => SingleChildScrollView(
+                              child: Container(
+                                width: 500,
+                                height: 500,
+                                child: Description(
+                                    descriptionData: snapshot.data![index]
+                                        ['description']),
+                                padding: EdgeInsets.only(
+                                    bottom: MediaQuery.of(context)
+                                        .viewInsets
+                                        .bottom),
+                              ),
                             ),
-                            Column(
-                              children: [
-                                ElevatedButton(
-                                  onPressed: () async {
-                                    setState(
-                                      () {
-                                        fetchReports(
-                                            "$kURL/teacher/event/stats-list/${snapshot.data![index]['eventId']}/III CSE C");
-                                        _data = fetchData(user);
-                                        // print(
-                                        //     jsonDecode(value.body).runtimeType);
-                                        showModalBottomSheet(
-                                          context: context,
-                                          builder: (context) =>
-                                              SingleChildScrollView(
-                                            child: Container(
-                                              width: 500,
-                                              height: 500,
-                                              child: StudentList(
-                                                  studentData: reports),
-                                              padding: EdgeInsets.only(
-                                                  bottom: MediaQuery.of(context)
-                                                      .viewInsets
-                                                      .bottom),
+                          );
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(16),
+                          margin: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: kPrimaryLightColor,
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Column(
+                                children: [
+                                  Text(
+                                      snapshot.data![index]['eventId']
+                                          .toString(),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                  Text(snapshot.data![index]['title']),
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () async {
+                                      setState(
+                                        () {
+                                          fetchReportsStats(
+                                              "$kURL/teacher/event/stats/${snapshot.data![index]['eventId']}/III CSE C");
+                                          fetchReports(
+                                              "$kURL/teacher/event/stats-list/${snapshot.data![index]['eventId']}/III CSE C");
+                                          _data = fetchData(user);
+                                          // print(
+                                          //     jsonDecode(value.body).runtimeType);
+                                          showModalBottomSheet(
+                                            context: context,
+                                            builder: (context) =>
+                                                SingleChildScrollView(
+                                              child: Container(
+                                                width: 500,
+                                                height: 500,
+                                                child: StudentList(
+                                                    studentData: reports),
+                                                padding: EdgeInsets.only(
+                                                    bottom:
+                                                        MediaQuery.of(context)
+                                                            .viewInsets
+                                                            .bottom),
+                                              ),
                                             ),
-                                          ),
-                                        );
-                                        // print(data);
-                                      },
-                                    );
-                                  },
-                                  child: Text("view report"),
-                                ),
-                              ],
-                            ),
-                            // Text("Mark as done"),
-                          ],
+                                          );
+                                          // print(data);
+                                        },
+                                      );
+                                    },
+                                    child: Text("view report"),
+                                  ),
+                                ],
+                              ),
+                              // Text("Mark as done"),
+                            ],
+                          ),
                         ),
                       );
                     },
@@ -219,7 +272,8 @@ class _StudentListState extends State<StudentList> {
       itemBuilder: (context, index) {
         Map<String, dynamic> student = widget.studentData[index];
         return Card(
-          color: student['isCompleted'] ? Colors.green[100] : Colors.red[100],
+          color:
+              student['isCompleted'] ? Colors.green[100] : Colors.red[100],
           child: ListTile(
             leading: Text(student['studentRollNo'],
                 style: TextStyle(fontWeight: FontWeight.bold)),

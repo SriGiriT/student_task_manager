@@ -7,8 +7,6 @@ import 'package:provider/provider.dart';
 import 'package:student_task_manager/component/google_sign_in.dart';
 import 'package:student_task_manager/constant.dart';
 
-
-
 class EventScreen extends StatefulWidget {
   @override
   _EventScreenState createState() => _EventScreenState();
@@ -60,42 +58,64 @@ class _EventScreenState extends State<EventScreen> {
                   return ListView.builder(
                     itemCount: snapshot.data!.length,
                     itemBuilder: (context, index) {
-                      return Container(
-                        padding: EdgeInsets.all(16),
-                        margin: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: kPrimaryLightColor,
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Column(
-                              children: [
-                                Text(
-                                    snapshot.data![index]['eventId'].toString(),
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                                Text(snapshot.data![index]['description']),
-                              ],
+                      return GestureDetector(
+                        onTap: () {
+                          snapshot.data![index].runtimeType;
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (context) => SingleChildScrollView(
+                              child: Container(
+                                width: 500,
+                                height: 500,
+                                child: Description(
+                                    descriptionData: snapshot.data![index]
+                                        ['description']),
+                                padding: EdgeInsets.only(
+                                    bottom: MediaQuery.of(context)
+                                        .viewInsets
+                                        .bottom),
+                              ),
                             ),
-                            ElevatedButton(
-                              onPressed: () async {
-                                if (await onBackPressed(
-                                    context, "Are you sure Mark as complete")) {
-                                  setState(() {
-                                    _data = fetchData(user);
-                                    print(user!.displayName);
-                                    http.post(Uri.parse(
-                                        "$kURL/student/update/${user!.email!.substring(0, user!.email!.indexOf("@"))}/${snapshot.data![index]['eventId']}"));
-                                  });
-                                }
-                              },
-                              child: Text("Mark as done"),
-                            ),
-                            // Text("Mark as done"),
-                          ],
+                          );
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(16),
+                          margin: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: kPrimaryLightColor,
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Column(
+                                children: [
+                                  Text(
+                                      snapshot.data![index]['eventId']
+                                          .toString(),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                  Text(snapshot.data![index]['title']),
+                                ],
+                              ),
+                              ElevatedButton(
+                                onPressed: () async {
+                                  if (await onBackPressed(context,
+                                      "Are you sure Mark as complete")) {
+                                    setState(() {
+                                      _data = fetchData(user);
+                                      print(user!.displayName);
+                                      http.post(Uri.parse(
+                                          "$kURL/student/update/${user!.email!.substring(0, user!.email!.indexOf("@"))}/${snapshot.data![index]['eventId']}"));
+                                    });
+                                  }
+                                },
+                                child: Text("Mark as done"),
+                              ),
+                              // Text("Mark as done"),
+                            ],
+                          ),
                         ),
                       );
                     },
@@ -113,8 +133,8 @@ class _EventScreenState extends State<EventScreen> {
   }
 
   Future<List<dynamic>> fetchData(User? user) async {
-
-    final response = await http.post(Uri.parse('$kURL/student/get/${user!.email!.substring(0, user.email!.indexOf("@"))}'));
+    final response = await http.post(Uri.parse(
+        '$kURL/student/get/${user!.email!.substring(0, user.email!.indexOf("@"))}'));
     print('${user.email!.substring(0, user.email!.indexOf("@"))}');
     // print(user!.displayName);
     // print(response.body);

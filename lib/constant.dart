@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-String kURL = "https://f3ba-2409-4072-6e97-b88b-da80-ab84-3d87-65a5.ap.ngrok.io";
+String kURL = "https://0d63-103-130-204-171.in.ngrok.io";
 const kPrimaryColor = Colors.blue;
 const kPrimaryLightColor = Color.fromARGB(252, 255, 175, 95);
 const kButtonColor = Colors.black12;
@@ -25,4 +25,19 @@ Future<bool> onBackPressed(BuildContext context, String text) {
       ],
     ),
   ).then((value) => value ?? false);
+}
+
+class Description extends StatefulWidget {
+  final String descriptionData;
+  const Description({required this.descriptionData});
+
+  @override
+  State<Description> createState() => _DescriptionState();
+}
+
+class _DescriptionState extends State<Description> {
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: Container(child: Text(widget.descriptionData)));
+  }
 }
