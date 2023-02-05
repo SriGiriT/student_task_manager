@@ -12,10 +12,15 @@ import 'package:student_task_manager/Screens/EventScreen.dart';
 import 'package:student_task_manager/Screens/Home.dart';
 import 'package:student_task_manager/Screens/AddEvent.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:student_task_manager/nyapp.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  // FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+  // firebaseMessaging.requestNotificationPermissions();
+  // firebaseMessaging.configure();
   // await Firebase.initializeApp();
   runApp(const MyApp());
 }
@@ -40,7 +45,7 @@ class _MyAppState extends State<MyApp> {
           routes: {
             '/': (context) => CommonWelcome(),
             '/event': (context) => EventScreen(),
-            '/eventte':(context) => EventScreenTeacher(),
+            '/eventte': (context) => EventScreenTeacher(),
             '/addEvent': (context) => AddEvent(),
             'text': (context) => MyApp()
           },

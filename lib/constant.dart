@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-String kURL = "https://0d63-103-130-204-171.in.ngrok.io";
+String kURL = "https://9cdf-103-114-211-140.in.ngrok.io";
 const kPrimaryColor = Colors.blue;
-const kPrimaryLightColor = Color.fromARGB(252, 255, 175, 95);
+const kPrimaryLightColor = Color.fromARGB(255, 255, 166, 51);
 const kButtonColor = Colors.black12;
 const kSaveKey = "selected_page111111111";
 TextStyle kButtonTextStyle =

@@ -25,11 +25,11 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
     final response = await http.post(Uri.parse(path));
     if (response.statusCode == 200) {
       setState(() {
-        print(jsonDecode(response.body));
-        print(jsonDecode(response.body).runtimeType);
+        // print(jsonDecode(response.body));
+        // print(jsonDecode(response.body).runtimeType);
         reports = [];
         for (var item in jsonDecode(response.body)) {
-          print(item.runtimeType);
+          // print(item.runtimeType);
           if (item is Map) {
             Map<String, dynamic> newMap = {};
             item.forEach((key, value) {
@@ -54,22 +54,11 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
     if (response.statusCode == 200) {
       setState(() {
         print(jsonDecode(response.body));
-        print(jsonDecode(response.body).runtimeType);
         reports_stats = {};
-        var dat = jsonDecode(response.body).runtimeType;
         // jsonDecode(response.body).forEach((key, value)){
         //   reports_stats[key] = value;
         // }
-        for (var item in jsonDecode(response.body)) {
-          print(item.runtimeType);
-          if (item is Map) {
-            Map<String, dynamic> newMap = {};
-            item.forEach((key, value) {
-              newMap[key] = value;
-            });
-            reports.add(newMap);
-          }
-        }
+        reports_stats = jsonDecode(response.body).cast<String, int>();
       });
     } else {
       print("error");
@@ -90,9 +79,7 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
         onWillPop: () => onBackPressed(context, "Are you sure want to exit"),
         child: Scaffold(
           appBar: AppBar(
-            title: Center(child: Text('Events')),
-            actions: <Widget>[
-              GestureDetector(
+            leading: GestureDetector(
                 child: Icon(
                   Icons.refresh,
                 ),
@@ -102,6 +89,8 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
                   });
                 },
               ),
+            title: Center(child: Text('Events')),
+            actions: <Widget>[
               TextButton(
                   onPressed: () {
                     final provider = Provider.of<GoogleSignInProvider>(context,
@@ -190,7 +179,9 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
                                                 width: 500,
                                                 height: 500,
                                                 child: StudentList(
-                                                    studentData: reports),
+                                                  studentData: reports,
+                                                  stats: reports_stats,
+                                                ),
                                                 padding: EdgeInsets.only(
                                                     bottom:
                                                         MediaQuery.of(context)
@@ -257,8 +248,8 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
 
 class StudentList extends StatefulWidget {
   final List<Map<String, dynamic>> studentData;
-
-  StudentList({required this.studentData});
+  final Map<String, int> stats;
+  StudentList({required this.studentData, required this.stats});
 
   @override
   _StudentListState createState() => _StudentListState();
@@ -267,25 +258,43 @@ class StudentList extends StatefulWidget {
 class _StudentListState extends State<StudentList> {
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: widget.studentData.length,
-      itemBuilder: (context, index) {
-        Map<String, dynamic> student = widget.studentData[index];
-        return Card(
-          color:
-              student['isCompleted'] ? Colors.green[100] : Colors.red[100],
-          child: ListTile(
-            leading: Text(student['studentRollNo'],
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            title: Text(student['name'],
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            trailing: IconButton(
-              icon: Icon(CupertinoIcons.phone),
-              onPressed: () => launch("tel:${student['mobile']}"),
-            ),
+    return Column(
+      children: [
+        Container(
+          padding: EdgeInsets.all(20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text("pending - ${widget.stats['pending']}", style: TextStyle(color: Colors.red.shade300, fontWeight: FontWeight.bold, fontSize: 18),),
+              Text(
+                  "${(widget.stats['completed'])}/${widget.stats['total']}", style: TextStyle(color: Colors.green.shade300, fontWeight: FontWeight.bold, fontSize: 18),),
+            ],
           ),
-        );
-      },
+        ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: widget.studentData.length,
+            itemBuilder: (context, index) {
+              Map<String, dynamic> student = widget.studentData[index];
+              return Card(
+                color: student['isCompleted']
+                    ? Colors.green[100]
+                    : Colors.red[100],
+                child: ListTile(
+                  leading: Text(student['studentRollNo'],
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  title: Text(student['name'],
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  trailing: IconButton(
+                    icon: Icon(CupertinoIcons.phone),
+                    onPressed: () => launch("tel:${student['mobile']}"),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }
