@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-String kURL = "https://9cdf-103-114-211-140.in.ngrok.io";
+String kURL = "https://tidy-puma-7.telebit.io";
 const kPrimaryColor = Colors.blue;
 const kPrimaryLightColor = Color.fromARGB(255, 255, 166, 51);
 const kButtonColor = Colors.black12;
