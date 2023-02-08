@@ -1,24 +1,31 @@
-// // Import the firebase_messaging package
-// import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-// import 'package:flutter/material.dart';
-// class MyNotificationHandler {
-//   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
-//   void init() {
-//     _firebaseMessaging.configure(
-//       onMessage: (Map<String, dynamic> message) async {
-//         print("onMessage: $message");
-//         // Show the notification to the user
-//       },
-//       onLaunch: (Map<String, dynamic> message) async {
-//         print("onLaunch: $message");
-//         // Navigate to the desired page when the app is launched from the notification
-//       },
-//       onResume: (Map<String, dynamic> message) async {
-//         print("onResume: $message");
-//         // Navigate to the desired page when the app is resumed from the notification
-//       },
-//     );
-//   }
-// }
+
+class Nyapp extends StatefulWidget {
+  const Nyapp({super.key});
+
+  @override
+  State<Nyapp> createState() => _NyappState();
+}
+
+class _NyappState extends State<Nyapp> {
+  _launchWhatsApp(String phone) async {
+  String url = "whatsapp://send?phone=$phone";
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    throw 'Could not launch $url';
+  }
+}
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(child: ElevatedButton(
+  onPressed: () => launch("whatsapp://send?phone=+919865390370"),
+  child:Icon( Icons.whatsapp),
+)
+,);
+  }
+}

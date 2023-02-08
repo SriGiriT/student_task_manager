@@ -285,10 +285,18 @@ class _StudentListState extends State<StudentList> {
                       style: TextStyle(fontWeight: FontWeight.bold)),
                   title: Text(student['name'],
                       style: TextStyle(fontWeight: FontWeight.bold)),
-                  trailing: IconButton(
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                    IconButton(
+                    icon: Icon(Icons.whatsapp),
+                    onPressed: () => launch("whatsapp://send?phone=+91${student['mobile']}"),
+                  ),
+                    IconButton(
                     icon: Icon(CupertinoIcons.phone),
                     onPressed: () => launch("tel:${student['mobile']}"),
                   ),
+                  ],)
                 ),
               );
             },
