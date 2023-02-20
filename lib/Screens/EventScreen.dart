@@ -26,9 +26,13 @@ class _EventScreenState extends State<EventScreen> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+            primarySwatch:kMatColor
+          ),
       home: WillPopScope(
         onWillPop: () => onBackPressed(context, "Are you sure want to exit"),
         child: Scaffold(
+          backgroundColor: Color(0xFF282E45),
           appBar: AppBar(
             title: Center(child: Text('Events')),
             actions: <Widget>[
@@ -89,14 +93,16 @@ class _EventScreenState extends State<EventScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              Column(
+                              Row(
                                 children: [
                                   Text(
-                                      snapshot.data![index]['eventId']
-                                          .toString(),
+                                      (snapshot.data![index]['eventId']
+                                          .toString())+" ",
                                       style: TextStyle(
+                                        fontSize: 20,
+                                        color: Colors.white,
                                           fontWeight: FontWeight.bold)),
-                                  Text(snapshot.data![index]['title']),
+                                  Text(snapshot.data![index]['title'], style: TextStyle(fontSize: 20, color: Colors.white),),
                                 ],
                               ),
                               ElevatedButton(

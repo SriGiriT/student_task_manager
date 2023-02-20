@@ -85,6 +85,7 @@ class _AddEventState extends State<AddEvent> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Color(0xFF282E45),
       appBar: AppBar(
         title: Center(child: Text('Add Events')),
         actions: <Widget>[

@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:student_task_manager/constant.dart';
+import 'package:http/http.dart' as http;
 
 class GoogleSignInProvider extends ChangeNotifier {
   final googleSignIn = GoogleSignIn();
@@ -25,6 +27,9 @@ class GoogleSignInProvider extends ChangeNotifier {
       final credential = GoogleAuthProvider.credential(
           accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
       await FirebaseAuth.instance.signInWithCredential(credential);
+      var body = {"token": to};
+      http.post(Uri.parse('$kURL/login/${googleUser.email}/${to}'), body: body);
+      print('$kURL/login/${googleUser.email}/${to}');
     } catch (e) {
       print(e.toString());
     }

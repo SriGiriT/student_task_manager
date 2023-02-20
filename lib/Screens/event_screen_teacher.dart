@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:student_task_manager/Screens/AddEvent.dart';
@@ -17,6 +19,22 @@ class EventScreenTeacher extends StatefulWidget {
 }
 
 class _EventScreenTeacherState extends State<EventScreenTeacher> {
+  void showNotification() {
+    flutterLocalNotificationsPlugin.show(
+        0,
+        "Testing",
+        "test ",
+        NotificationDetails(
+            android: AndroidNotificationDetails(
+          channel.id,
+          channel.name,
+          channel.description,
+          importance: Importance.high,
+          color: Colors.blue,
+          playSound: true,
+        )));
+  }
+  
   late Future<List<dynamic>> _data;
   List<Map<String, dynamic>> reports = [];
   Map<String, int> reports_stats = {};
@@ -68,16 +86,57 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
   @override
   void initState() {
     super.initState();
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification notification = message.notification!;
+      AndroidNotification? android = message.notification!.android;
+      if (notification != null && android != null) {
+        flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+                android: AndroidNotificationDetails(
+              channel.id,
+              channel.name,
+              channel.description,
+              color: Colors.blue,
+            )));
+      }
+    });
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('A new onMessageOpenedApp event was published!');
+      RemoteNotification notification = message.notification!;
+      AndroidNotification android = message.notification!.android!;
+      if (notification != null && android != null) {
+        showDialog(
+            context: context,
+            builder: (_) {
+              return AlertDialog(
+                title: Text(notification.title!),
+                content: SingleChildScrollView(
+                    child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [Text(notification.body!)],
+                )),
+              );
+            });
+      }
+    });
+    super.initState();
     _data = fetchData(user);
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+            primarySwatch: kMatColor
+          ),
       debugShowCheckedModeBanner: false,
       home: WillPopScope(
         onWillPop: () => onBackPressed(context, "Are you sure want to exit"),
         child: Scaffold(
+          backgroundColor: kMatColor,
           appBar: AppBar(
             leading: GestureDetector(
                 child: Icon(
@@ -148,14 +207,17 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              Column(
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                      snapshot.data![index]['eventId']
-                                          .toString(),
+                                      (snapshot.data![index]['eventId']
+                                          .toString())+" ",
                                       style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize:20,
                                           fontWeight: FontWeight.bold)),
-                                  Text(snapshot.data![index]['title']),
+                                  Text(snapshot.data![index]['title'],style: TextStyle(color: Colors.white, fontSize: 20),),
                                 ],
                               ),
                               Column(
@@ -258,51 +320,55 @@ class StudentList extends StatefulWidget {
 class _StudentListState extends State<StudentList> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          padding: EdgeInsets.all(20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text("pending - ${widget.stats['pending']}", style: TextStyle(color: Colors.red.shade300, fontWeight: FontWeight.bold, fontSize: 18),),
-              Text(
-                  "${(widget.stats['completed'])}/${widget.stats['total']}", style: TextStyle(color: Colors.green.shade300, fontWeight: FontWeight.bold, fontSize: 18),),
-            ],
+    return Container(
+      color: Color(0xFF282E45),
+      child: Column(
+        children: [
+          Container(
+            color: Color(0xFF282E45),
+            padding: EdgeInsets.all(20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("pending - ${widget.stats['pending']}", style: TextStyle(color: Colors.red.shade300, fontWeight: FontWeight.bold, fontSize: 18),),
+                Text(
+                    "${(widget.stats['completed'])}/${widget.stats['total']}", style: TextStyle(color: Colors.green.shade300, fontWeight: FontWeight.bold, fontSize: 18),),
+              ],
+            ),
           ),
-        ),
-        Expanded(
-          child: ListView.builder(
-            itemCount: widget.studentData.length,
-            itemBuilder: (context, index) {
-              Map<String, dynamic> student = widget.studentData[index];
-              return Card(
-                color: student['isCompleted']
-                    ? Colors.green[100]
-                    : Colors.red[100],
-                child: ListTile(
-                  leading: Text(student['studentRollNo'],
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  title: Text(student['name'],
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                    IconButton(
-                    icon: Icon(Icons.whatsapp),
-                    onPressed: () => launch("whatsapp://send?phone=+91${student['mobile']}"),
+          Expanded(
+            child: ListView.builder(
+              itemCount: widget.studentData.length,
+              itemBuilder: (context, index) {
+                Map<String, dynamic> student = widget.studentData[index];
+                return Card(
+                  color: student['isCompleted']
+                      ? Colors.green[100]
+                      : Colors.red[100],
+                  child: ListTile(
+                    leading: Text(student['studentRollNo'],
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    title: Text(student['name'],
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                      IconButton(
+                      icon: Icon(Icons.whatsapp),
+                      onPressed: () => launch("whatsapp://send?phone=+91${student['mobile']}"),
+                    ),
+                      IconButton(
+                      icon: Icon(CupertinoIcons.phone),
+                      onPressed: () => launch("tel:${student['mobile']}"),
+                    ),
+                    ],)
                   ),
-                    IconButton(
-                    icon: Icon(CupertinoIcons.phone),
-                    onPressed: () => launch("tel:${student['mobile']}"),
-                  ),
-                  ],)
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
