@@ -183,6 +183,7 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
                             context: context,
                             builder: (context) => SingleChildScrollView(
                               child: Container(
+                                color: kPrimaryLightColor,
                                 width: 500,
                                 height: 500,
                                 child: Description(
@@ -275,6 +276,7 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
             ),
           ),
           floatingActionButton: FloatingActionButton(
+            backgroundColor: kPrimaryLightColor,
             onPressed: () {
               Navigator.push(
                 context,

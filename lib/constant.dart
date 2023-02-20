@@ -41,7 +41,7 @@ class Description extends StatefulWidget {
 class _DescriptionState extends State<Description> {
   @override
   Widget build(BuildContext context) {
-    return Center(child: Container(child: Text(widget.descriptionData)));
+    return Center(child: Container(child: Text(widget.descriptionData, style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold))));
   }
 }
 

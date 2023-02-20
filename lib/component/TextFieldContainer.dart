@@ -22,7 +22,7 @@ class _TextFieldContainerState extends State<TextFieldContainer> {
       height: widget.isDescription ? 200 : 50,
       width: size.width * widget.width,
       decoration: BoxDecoration(
-        color: kPrimaryColor,
+        color: kPrimaryLightColor,
         borderRadius: BorderRadius.circular(29),
       ),
       child: widget.child,

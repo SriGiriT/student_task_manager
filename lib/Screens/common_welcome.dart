@@ -46,7 +46,7 @@ class _CommonWelcomeState extends State<CommonWelcome> {
           centerTitle: true,
         ),
         body: Container(
-          color: Color(0xFF282E45),
+          color: kPrimaryColor,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

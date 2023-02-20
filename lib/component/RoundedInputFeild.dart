@@ -33,13 +33,13 @@ class _RoundedInputFieldState extends State<RoundedInputField> {
         onTap: widget.onTap,
         // widget.onChanged;
         onChanged: widget.onChanged,
-        cursorColor: kPrimaryColor,
+        cursorColor: kPrimaryLightColor,
         maxLines: widget.isDes ? 10 : 1,
         decoration: InputDecoration(
           hintStyle: TextStyle(color: Colors.white),
           icon: Icon(
             widget.icon,
-            color: kPrimaryLightColor,
+            color: Colors.white,
           ),
           hintText: widget.hintText,
           border: InputBorder.none,

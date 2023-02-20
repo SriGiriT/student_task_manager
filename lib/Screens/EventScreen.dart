@@ -32,7 +32,7 @@ class _EventScreenState extends State<EventScreen> {
       home: WillPopScope(
         onWillPop: () => onBackPressed(context, "Are you sure want to exit"),
         child: Scaffold(
-          backgroundColor: Color(0xFF282E45),
+          backgroundColor: kPrimaryColor,
           appBar: AppBar(
             title: Center(child: Text('Events')),
             actions: <Widget>[
@@ -71,6 +71,7 @@ class _EventScreenState extends State<EventScreen> {
                               child: Container(
                                 width: 500,
                                 height: 500,
+                                color: kPrimaryColor,
                                 child: Description(
                                     descriptionData: snapshot.data![index]
                                         ['description']),
