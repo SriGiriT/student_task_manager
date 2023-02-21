@@ -30,7 +30,7 @@ class _HomeScreenTeacherState extends State<HomeScreenTeacher> {
                   child: Text("Something went wrong!"),
                 );
               else if (snapshot.hasData) {
-                return EventScreenTeacher();
+                return TeacherScreen();
               } else
                 return WelcomeScreenSignUp();
             }),

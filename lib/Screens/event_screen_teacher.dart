@@ -7,11 +7,80 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:student_task_manager/Screens/AddEvent.dart';
+import 'package:student_task_manager/Screens/attendance_screen.dart';
+import 'package:student_task_manager/Screens/od_page_staffs.dart';
 import 'package:student_task_manager/component/google_sign_in.dart';
 import 'package:student_task_manager/constant.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+bool isLoading = false;
+
+
+class TeacherScreen extends StatefulWidget {
+  const TeacherScreen({super.key});
+
+  @override
+  State<TeacherScreen> createState() => _TeacherScreenState();
+}
+
+class _TeacherScreenState extends State<TeacherScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Color(0xFF0A0E21),
+        appBar: AppBar(
+          backgroundColor: Color(0xFF0A0E21),
+          title: Center(
+            child: Text(
+              "Staff Page",
+            ),
+          ),
+        ),
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GridView(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2),
+              padding: const EdgeInsets.all(8),
+              // crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Listofgames(1, "Events", () {
+                  Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EventScreenTeacher(),
+                ),
+              );
+                }, Icons.task),
+                Listofgames(2, "Attendance", () { 
+                  Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AttendanceScreen(),
+                ),
+              );
+                }, Icons.check),
+                Listofgames(3, "On Duty", () {
+                Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ODScreenStaff(),
+                ),
+              );
+                }, Icons.add)
+                //   ],
+                // )
+              ],
+            ),
+          ),
+        ),
+      );
+  }
+}
+
 
 class EventScreenTeacher extends StatefulWidget {
   @override
@@ -34,7 +103,7 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
           playSound: true,
         )));
   }
-  
+
   late Future<List<dynamic>> _data;
   List<Map<String, dynamic>> reports = [];
   Map<String, int> reports_stats = {};
@@ -129,9 +198,7 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-            primarySwatch: kMatColor
-          ),
+      theme: ThemeData(primarySwatch: kMatColor),
       debugShowCheckedModeBanner: false,
       home: WillPopScope(
         onWillPop: () => onBackPressed(context, "Are you sure want to exit"),
@@ -139,15 +206,15 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
           backgroundColor: kMatColor,
           appBar: AppBar(
             leading: GestureDetector(
-                child: Icon(
-                  Icons.refresh,
-                ),
-                onTap: () {
-                  setState(() {
-                    _data = fetchData(user);
-                  });
-                },
+              child: Icon(
+                Icons.refresh,
               ),
+              onTap: () {
+                setState(() {
+                  _data = fetchData(user);
+                });
+              },
+            ),
             title: Center(child: Text('Events')),
             actions: <Widget>[
               TextButton(
@@ -178,24 +245,37 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
                     itemBuilder: (context, index) {
                       return GestureDetector(
                         onTap: () {
-                          snapshot.data![index].runtimeType;
-                          showModalBottomSheet(
-                            context: context,
-                            builder: (context) => SingleChildScrollView(
-                              child: Container(
-                                color: kPrimaryLightColor,
-                                width: 500,
-                                height: 500,
-                                child: Description(
-                                    descriptionData: snapshot.data![index]
-                                        ['description']),
-                                padding: EdgeInsets.only(
-                                    bottom: MediaQuery.of(context)
-                                        .viewInsets
-                                        .bottom),
-                              ),
-                            ),
-                          );
+                          setState(() {
+                                        isLoading = false;
+                                      });
+                                      fetchReportsStats(
+                                          "$kURL/teacher/event/stats/${snapshot.data![index]['eventId']}/III CSE C");
+                                      fetchReports(
+                                          "$kURL/teacher/event/stats-list/${snapshot.data![index]['eventId']}/III CSE C");
+                                      setState(() {
+                                        isLoading = true;
+                                        _data = fetchData(user);
+                                      });
+                                      // print(
+                                      //     jsonDecode(value.body).runtimeType);
+                                      showModalBottomSheet(
+                                        context: context,
+                                        builder: (context) =>
+                                            SingleChildScrollView(
+                                          child: Container(
+                                            width: 500,
+                                            height: 500,
+                                            child: StudentList(
+                                              studentData: reports,
+                                              stats: reports_stats,
+                                            ),
+                                            padding: EdgeInsets.only(
+                                                bottom: MediaQuery.of(context)
+                                                    .viewInsets
+                                                    .bottom),
+                                          ),
+                                        ),
+                                      );
                         },
                         child: Container(
                           padding: EdgeInsets.all(16),
@@ -213,51 +293,43 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
                                 children: [
                                   Text(
                                       (snapshot.data![index]['eventId']
-                                          .toString())+" ",
+                                              .toString()) +
+                                          " ",
                                       style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize:20,
+                                          color: Colors.white,
+                                          fontSize: 20,
                                           fontWeight: FontWeight.bold)),
-                                  Text(snapshot.data![index]['title'],style: TextStyle(color: Colors.white, fontSize: 20),),
+                                  Text(
+                                    snapshot.data![index]['title'],
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 20),
+                                  ),
                                 ],
                               ),
                               Column(
                                 children: [
                                   ElevatedButton(
                                     onPressed: () async {
-                                      setState(
-                                        () {
-                                          fetchReportsStats(
-                                              "$kURL/teacher/event/stats/${snapshot.data![index]['eventId']}/III CSE C");
-                                          fetchReports(
-                                              "$kURL/teacher/event/stats-list/${snapshot.data![index]['eventId']}/III CSE C");
-                                          _data = fetchData(user);
-                                          // print(
-                                          //     jsonDecode(value.body).runtimeType);
-                                          showModalBottomSheet(
-                                            context: context,
-                                            builder: (context) =>
-                                                SingleChildScrollView(
-                                              child: Container(
-                                                width: 500,
-                                                height: 500,
-                                                child: StudentList(
-                                                  studentData: reports,
-                                                  stats: reports_stats,
-                                                ),
-                                                padding: EdgeInsets.only(
-                                                    bottom:
-                                                        MediaQuery.of(context)
-                                                            .viewInsets
-                                                            .bottom),
-                                              ),
-                                            ),
-                                          );
-                                          // print(data);
-                                        },
-                                      );
+                                      snapshot.data![index].runtimeType;
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (context) => SingleChildScrollView(
+                              child: Container(
+                                color: Color(0xFF0A0E21),
+                                width: 500,
+                                height: 500,
+                                child: Description(
+                                    descriptionData: snapshot.data![index]
+                                        ['description']),
+                                padding: EdgeInsets.only(
+                                    bottom: MediaQuery.of(context)
+                                        .viewInsets
+                                        .bottom),
+                              ),
+                            ),
+                          );
                                     },
-                                    child: Text("view report"),
+                                    child: Text("description"),
                                   ),
                                 ],
                               ),
@@ -269,7 +341,7 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
                     },
                   );
                 } else if (snapshot.hasError) {
-                  return Text("${snapshot.error}");
+                  return Container(child: Center(child: Text("${snapshot.error}", style: TextStyle(color: Colors.white, fontSize: 50),)));
                 }
                 return Center(child: CircularProgressIndicator());
               },
@@ -323,18 +395,29 @@ class _StudentListState extends State<StudentList> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Color(0xFF282E45),
+      color: Color(0xFF0A0E21),
       child: Column(
         children: [
           Container(
-            color: Color(0xFF282E45),
+            color: Color(0xFF0A0E21),
             padding: EdgeInsets.all(20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("pending - ${widget.stats['pending']}", style: TextStyle(color: Colors.red.shade300, fontWeight: FontWeight.bold, fontSize: 18),),
                 Text(
-                    "${(widget.stats['completed'])}/${widget.stats['total']}", style: TextStyle(color: Colors.green.shade300, fontWeight: FontWeight.bold, fontSize: 18),),
+                  "pending - ${widget.stats['pending']}",
+                  style: TextStyle(
+                      color: Colors.red.shade300,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18),
+                ),
+                Text(
+                  "${(widget.stats['completed'])}/${widget.stats['total']}",
+                  style: TextStyle(
+                      color: Colors.green.shade300,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18),
+                ),
               ],
             ),
           ),
@@ -348,23 +431,24 @@ class _StudentListState extends State<StudentList> {
                       ? Colors.green[100]
                       : Colors.red[100],
                   child: ListTile(
-                    leading: Text(student['studentRollNo'],
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                    title: Text(student['name'],
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                      IconButton(
-                      icon: Icon(Icons.whatsapp),
-                      onPressed: () => launch("whatsapp://send?phone=+91${student['mobile']}"),
-                    ),
-                      IconButton(
-                      icon: Icon(CupertinoIcons.phone),
-                      onPressed: () => launch("tel:${student['mobile']}"),
-                    ),
-                    ],)
-                  ),
+                      leading: Text(student['studentRollNo'],
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      title: Text(student['name'],
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.whatsapp),
+                            onPressed: () => launch(
+                                "whatsapp://send?phone=+91${student['mobile']}"),
+                          ),
+                          IconButton(
+                            icon: Icon(CupertinoIcons.phone),
+                            onPressed: () => launch("tel:${student['mobile']}"),
+                          ),
+                        ],
+                      )),
                 );
               },
             ),

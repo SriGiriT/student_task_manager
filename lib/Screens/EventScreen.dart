@@ -32,7 +32,7 @@ class _EventScreenState extends State<EventScreen> {
       home: WillPopScope(
         onWillPop: () => onBackPressed(context, "Are you sure want to exit"),
         child: Scaffold(
-          backgroundColor: kPrimaryColor,
+          backgroundColor: Color(0xFF0A0E21),
           appBar: AppBar(
             title: Center(child: Text('Events')),
             actions: <Widget>[
@@ -71,7 +71,7 @@ class _EventScreenState extends State<EventScreen> {
                               child: Container(
                                 width: 500,
                                 height: 500,
-                                color: kPrimaryColor,
+                                color: Color(0xFF0A0E21),
                                 child: Description(
                                     descriptionData: snapshot.data![index]
                                         ['description']),
@@ -128,7 +128,7 @@ class _EventScreenState extends State<EventScreen> {
                     },
                   );
                 } else if (snapshot.hasError) {
-                  return Text("${snapshot.error}");
+                  return Container(child: Center(child: Text("${snapshot.error}", style: TextStyle(color: Colors.white, fontSize: 50),)));
                 }
                 return Center(child: CircularProgressIndicator());
               },

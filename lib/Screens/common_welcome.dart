@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:student_task_manager/Screens/Home.dart';
+import 'package:student_task_manager/Screens/attendance_screen.dart';
 import 'package:student_task_manager/Screens/home_screen_teacher.dart';
+import 'package:student_task_manager/Screens/od_page_staffs.dart';
 import 'package:student_task_manager/Screens/profile.dart';
 import 'package:student_task_manager/constant.dart';
 
@@ -52,6 +54,30 @@ class _CommonWelcomeState extends State<CommonWelcome> {
             children: [
               RoundedButton(
                   sizee: 1,
+                  text: "HOD",
+                  press: () async {
+                    if (await onBackPressed(
+                        context, "Are you sure want to select HOD")) {
+                      _saveSelectedPage("hod");
+                      setState(() {
+                        _selectedPage = "hod";
+                      });
+                    }
+                  }),
+              RoundedButton(
+                  sizee: 1,
+                  text: "Admin",
+                  press: () async {
+                    if (await onBackPressed(
+                        context, "Are you sure want to select Admin")) {
+                      _saveSelectedPage("admin");
+                      setState(() {
+                        _selectedPage = "admin";
+                      });
+                    }
+                  }),
+              RoundedButton(
+                  sizee: 1,
                   text: "Teacher",
                   press: () async {
                     if (await onBackPressed(
@@ -77,7 +103,11 @@ class _CommonWelcomeState extends State<CommonWelcome> {
           ),
         ),
       );
-    } else if (_selectedPage == "teacher") {
+    } else if (_selectedPage == "hod") {
+      return HomeScreenTeacher();
+    }  else if (_selectedPage == "admin") {
+      return HomeScreenTeacher();
+    }  else if (_selectedPage == "teacher") {
       return HomeScreenTeacher();
     } else {
       return HomeScreenStudent();

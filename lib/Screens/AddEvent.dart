@@ -85,7 +85,7 @@ class _AddEventState extends State<AddEvent> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: kPrimaryColor,
+      backgroundColor: Color(0xFF0A0E21),
       appBar: AppBar(
         title: Center(child: Text('Add Events')),
         actions: <Widget>[
@@ -108,9 +108,10 @@ class _AddEventState extends State<AddEvent> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                height: 150,
+                height: 100,
               ),
               RoundedInputField(
+                isDT: false,
                   hintText: "Title",
                   onTap: () {},
                   icon: Icons.title,
@@ -120,6 +121,7 @@ class _AddEventState extends State<AddEvent> {
                   times: 0.9,
                   isDes: false),
               RoundedInputField(
+                isDT: false,
                 isDes: true,
                 times: 0.9,
                 hintText: "Description",
@@ -133,6 +135,7 @@ class _AddEventState extends State<AddEvent> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   RoundedInputField(
+                    isDT: true,
                     isDes: false,
                     times: 0.45,
                     hintText: widget.startDate == null
@@ -170,6 +173,7 @@ class _AddEventState extends State<AddEvent> {
                     },
                   ),
                   RoundedInputField(
+                    isDT: true,
                     isDes: false,
                     times: 0.45,
                     hintText: widget.endDate == null
