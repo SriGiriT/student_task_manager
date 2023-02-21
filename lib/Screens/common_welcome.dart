@@ -48,12 +48,13 @@ class _CommonWelcomeState extends State<CommonWelcome> {
           centerTitle: true,
         ),
         body: Container(
-          color: kPrimaryColor,
+          width:  MediaQuery.of(context).size.width,
+          color: Color(0xFF0A0E21),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               RoundedButton(
-                  sizee: 1,
+                  sizee: 0.8,
                   text: "HOD",
                   press: () async {
                     if (await onBackPressed(
@@ -65,7 +66,7 @@ class _CommonWelcomeState extends State<CommonWelcome> {
                     }
                   }),
               RoundedButton(
-                  sizee: 1,
+                  sizee: 0.8,
                   text: "Admin",
                   press: () async {
                     if (await onBackPressed(
@@ -77,7 +78,7 @@ class _CommonWelcomeState extends State<CommonWelcome> {
                     }
                   }),
               RoundedButton(
-                  sizee: 1,
+                  sizee: 0.8,
                   text: "Teacher",
                   press: () async {
                     if (await onBackPressed(
@@ -89,7 +90,7 @@ class _CommonWelcomeState extends State<CommonWelcome> {
                     }
                   }),
               RoundedButton(
-                sizee: 1,
+                sizee: 0.8,
                 text: "Student",
                 press: () async {
                   if(await onBackPressed(context, "Are you sure want to select Student"))

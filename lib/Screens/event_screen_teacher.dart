@@ -17,7 +17,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 bool isLoading = false;
 
-
 class TeacherScreen extends StatefulWidget {
   const TeacherScreen({super.key});
 
@@ -30,57 +29,63 @@ class _TeacherScreenState extends State<TeacherScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFF0A0E21),
-        appBar: AppBar(
-          backgroundColor: Color(0xFF0A0E21),
-          title: Center(
-            child: Text(
-              "Staff Page",
-            ),
-          ),
-        ),
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: GridView(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2),
-              padding: const EdgeInsets.all(8),
-              // crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Listofgames(1, "Events", () {
-                  Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EventScreenTeacher(),
-                ),
-              );
-                }, Icons.task),
-                Listofgames(2, "Attendance", () { 
-                  Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AttendanceScreen(),
-                ),
-              );
-                }, Icons.check),
-                Listofgames(3, "On Duty", () {
+      appBar: AppBar(
+        title: Center(child: Text('Staff Page')),
+        actions: <Widget>[
+          TextButton(
+              onPressed: () {
+                final provider =
+                    Provider.of<GoogleSignInProvider>(context, listen: false);
+                provider.logout();
+              },
+              child: Text(
+                "Logout",
+                style: TextStyle(color: Colors.white),
+              ))
+        ],
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: GridView(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2),
+            padding: const EdgeInsets.all(8),
+            // crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Listofgames(1, "Events", () {
                 Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ODScreenStaff(),
-                ),
-              );
-                }, Icons.add)
-                //   ],
-                // )
-              ],
-            ),
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EventScreenTeacher(),
+                  ),
+                );
+              }, Icons.task),
+              Listofgames(2, "Attendance", () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AttendancePage(),
+                  ),
+                );
+              }, Icons.check),
+              Listofgames(3, "On Duty", () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ODScreenStaff(),
+                  ),
+                );
+              }, Icons.add)
+              //   ],
+              // )
+            ],
           ),
         ),
-      );
+      ),
+    );
   }
 }
-
 
 class EventScreenTeacher extends StatefulWidget {
   @override
@@ -246,36 +251,35 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
                       return GestureDetector(
                         onTap: () {
                           setState(() {
-                                        isLoading = false;
-                                      });
-                                      fetchReportsStats(
-                                          "$kURL/teacher/event/stats/${snapshot.data![index]['eventId']}/III CSE C");
-                                      fetchReports(
-                                          "$kURL/teacher/event/stats-list/${snapshot.data![index]['eventId']}/III CSE C");
-                                      setState(() {
-                                        isLoading = true;
-                                        _data = fetchData(user);
-                                      });
-                                      // print(
-                                      //     jsonDecode(value.body).runtimeType);
-                                      showModalBottomSheet(
-                                        context: context,
-                                        builder: (context) =>
-                                            SingleChildScrollView(
-                                          child: Container(
-                                            width: 500,
-                                            height: 500,
-                                            child: StudentList(
-                                              studentData: reports,
-                                              stats: reports_stats,
-                                            ),
-                                            padding: EdgeInsets.only(
-                                                bottom: MediaQuery.of(context)
-                                                    .viewInsets
-                                                    .bottom),
-                                          ),
-                                        ),
-                                      );
+                            isLoading = false;
+                          });
+                          fetchReportsStats(
+                              "$kURL/teacher/event/stats/${snapshot.data![index]['eventId']}/III CSE C");
+                          fetchReports(
+                              "$kURL/teacher/event/stats-list/${snapshot.data![index]['eventId']}/III CSE C");
+                          setState(() {
+                            isLoading = true;
+                            _data = fetchData(user);
+                          });
+                          // print(
+                          //     jsonDecode(value.body).runtimeType);
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (context) => SingleChildScrollView(
+                              child: Container(
+                                width: 500,
+                                height: 500,
+                                child: StudentList(
+                                  studentData: reports,
+                                  stats: reports_stats,
+                                ),
+                                padding: EdgeInsets.only(
+                                    bottom: MediaQuery.of(context)
+                                        .viewInsets
+                                        .bottom),
+                              ),
+                            ),
+                          );
                         },
                         child: Container(
                           padding: EdgeInsets.all(16),
@@ -311,23 +315,25 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
                                   ElevatedButton(
                                     onPressed: () async {
                                       snapshot.data![index].runtimeType;
-                          showModalBottomSheet(
-                            context: context,
-                            builder: (context) => SingleChildScrollView(
-                              child: Container(
-                                color: Color(0xFF0A0E21),
-                                width: 500,
-                                height: 500,
-                                child: Description(
-                                    descriptionData: snapshot.data![index]
-                                        ['description']),
-                                padding: EdgeInsets.only(
-                                    bottom: MediaQuery.of(context)
-                                        .viewInsets
-                                        .bottom),
-                              ),
-                            ),
-                          );
+                                      showModalBottomSheet(
+                                        context: context,
+                                        builder: (context) =>
+                                            SingleChildScrollView(
+                                          child: Container(
+                                            color: Color(0xFF0A0E21),
+                                            width: 500,
+                                            height: 500,
+                                            child: Description(
+                                                descriptionData:
+                                                    snapshot.data![index]
+                                                        ['description']),
+                                            padding: EdgeInsets.only(
+                                                bottom: MediaQuery.of(context)
+                                                    .viewInsets
+                                                    .bottom),
+                                          ),
+                                        ),
+                                      );
                                     },
                                     child: Text("description"),
                                   ),
@@ -341,7 +347,12 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
                     },
                   );
                 } else if (snapshot.hasError) {
-                  return Container(child: Center(child: Text("${snapshot.error}", style: TextStyle(color: Colors.white, fontSize: 50),)));
+                  return Container(
+                      child: Center(
+                          child: Text(
+                    "${snapshot.error}",
+                    style: TextStyle(color: Colors.white, fontSize: 50),
+                  )));
                 }
                 return Center(child: CircularProgressIndicator());
               },
