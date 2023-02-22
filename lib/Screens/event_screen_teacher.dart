@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:student_task_manager/Screens/AddEvent.dart';
 import 'package:student_task_manager/Screens/attendance_screen.dart';
 import 'package:student_task_manager/Screens/od_page_staffs.dart';
+import 'package:student_task_manager/Screens/od_page_student.dart';
 import 'package:student_task_manager/component/google_sign_in.dart';
 import 'package:student_task_manager/constant.dart';
 
@@ -73,7 +74,7 @@ class _TeacherScreenState extends State<TeacherScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ODScreenStaff(),
+                    builder: (context) => ODStudentScreen(),
                   ),
                 );
               }, Icons.add)
@@ -354,7 +355,10 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
                     style: TextStyle(color: Colors.white, fontSize: 50),
                   )));
                 }
-                return Center(child: CircularProgressIndicator());
+                return Center(
+                    child: CircularProgressIndicator(
+                  color: Colors.red,
+                ));
               },
             ),
           ),
@@ -379,6 +383,11 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
   }
 
   Future<List<dynamic>> fetchData(User? user) async {
+    setState(() {
+      CircularProgressIndicator(
+        color: Colors.red,
+      );
+    });
     final response = await http.post(Uri.parse(
         '$kURL/teacher/events/pending/${user!.email!.substring(0, user.email!.indexOf("@"))}'));
     // print(response.body);
@@ -388,7 +397,7 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
       return jsonResponse;
     } else {
       // If that call was not successful, throw an error.
-      throw Exception('Failed to load post');
+      throw Exception('404 Error');
     }
   }
 }

@@ -26,9 +26,7 @@ class _EventScreenState extends State<EventScreen> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-            primarySwatch:kMatColor
-          ),
+      theme: ThemeData(primarySwatch: kMatColor),
       home: WillPopScope(
         onWillPop: () => onBackPressed(context, "Are you sure want to exit"),
         child: Scaffold(
@@ -98,12 +96,17 @@ class _EventScreenState extends State<EventScreen> {
                                 children: [
                                   Text(
                                       (snapshot.data![index]['eventId']
-                                          .toString())+" ",
+                                              .toString()) +
+                                          " ",
                                       style: TextStyle(
-                                        fontSize: 20,
-                                        color: Colors.white,
+                                          fontSize: 20,
+                                          color: Colors.white,
                                           fontWeight: FontWeight.bold)),
-                                  Text(snapshot.data![index]['title'], style: TextStyle(fontSize: 20, color: Colors.white),),
+                                  Text(
+                                    snapshot.data![index]['title'],
+                                    style: TextStyle(
+                                        fontSize: 20, color: Colors.white),
+                                  ),
                                 ],
                               ),
                               ElevatedButton(
@@ -128,9 +131,17 @@ class _EventScreenState extends State<EventScreen> {
                     },
                   );
                 } else if (snapshot.hasError) {
-                  return Container(child: Center(child: Text("${snapshot.error}", style: TextStyle(color: Colors.white, fontSize: 50),)));
+                  return Container(
+                      child: Center(
+                          child: Text(
+                    "${snapshot.error}",
+                    style: TextStyle(color: Colors.white, fontSize: 50),
+                  )));
                 }
-                return Center(child: CircularProgressIndicator());
+                return Center(
+                    child: CircularProgressIndicator(
+                  color: Colors.red,
+                ));
               },
             ),
           ),

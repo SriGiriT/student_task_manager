@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:student_task_manager/Screens/home_screen_teacher.dart';
 import 'package:student_task_manager/component/RoundedButton.dart';
 import 'package:student_task_manager/component/RoundedInputFeild.dart';
 import 'package:student_task_manager/component/TextFieldContainer.dart';
@@ -111,7 +112,7 @@ class _AddEventState extends State<AddEvent> {
                 height: 100,
               ),
               RoundedInputField(
-                isDT: false,
+                  isDT: false,
                   hintText: "Title",
                   onTap: () {},
                   icon: Icons.title,
@@ -276,9 +277,11 @@ class _AddEventState extends State<AddEvent> {
                   // var encodedBody =
                   //     body.keys.map((e) => '$e=${body[e]}').join("&");
                   http.post(Uri.parse('$kURL/teacher/event/new'), body: body);
+                  print(body);
                   print(
                       "$kURL/${widget.title}/${widget.description}/${st.substring(0, 10)} IST ${st.substring(11, 19)}/${ed.substring(0, 10)} IST ${ed.substring(11, 19)}/${widget.selectedYear} ${widget.selectedDept} ${widget.selectedClass}");
-                  Navigator.pop(context);
+                  Navigator.popUntil(context, ModalRoute.withName('/'));
+                  Navigator.pushNamed(context, '/eventte');
                 },
               )
             ],

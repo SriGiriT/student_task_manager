@@ -42,12 +42,27 @@ class ApiService {
 
   static Future<void> submitAttendance(List<Student> students) async {
     final data = List<dynamic>.from(students.map((student) => {
-          'id': student.id,
-          'present': student.present,
+          student.id: student.present,
         }));
     print(data);
-    final response = await http.post(Uri.parse('$baseUrl/attendance'),
-        body: json.encode(data));
+    Map<String, bool> res = {};
+    for (var item in data) {
+      // print(item.runtimeType);
+      if (item is Map) {
+        // Map<String, bool> newMap = {};
+        item.forEach((key, value) {
+          res.putIfAbsent(key, () => value);
+          // newMap[key] = value;
+          // });
+          // res.add(newMap);
+        });
+      }
+    }
+    print(res);
+    final response = await http.post(
+        Uri.parse('$baseUrl/teacher/student/attendance'),
+        headers: {"Content-Type" : "application/json"},
+        body: json.encode(res));
     if (response.statusCode != 200) {
       throw Exception('Failed to submit attendance.');
     }
@@ -87,8 +102,8 @@ class _AttendancePageState extends State<AttendancePage> {
     return Scaffold(
       backgroundColor: Color(0xFF0A0E21),
       appBar: AppBar(title: Text('Attendance')),
-      body: _students == null
-          ? Center(child: CircularProgressIndicator())
+      body: _students.length == 0
+          ? Center(child: CircularProgressIndicator(color: Colors.red,))
           : ListView.builder(
               itemCount: _students.length,
               itemBuilder: (context, index) {
@@ -100,7 +115,9 @@ class _AttendancePageState extends State<AttendancePage> {
                     });
                   },
                   child: ListTile(
-                    tileColor: student.present ? Colors.green.shade300 : Colors.red.shade300 ,
+                    tileColor: student.present
+                        ? Colors.green.shade300
+                        : Colors.red.shade300,
                     title: Text(
                       "${student.id} - ${student.name}",
                       style: TextStyle(color: Colors.white, fontSize: 18),
@@ -109,7 +126,7 @@ class _AttendancePageState extends State<AttendancePage> {
                       value: student.present,
                       onChanged: (value) {
                         student.present = value!;
-                        _updateAttendance(index, value!);
+                        _updateAttendance(index, value);
                       },
                     ),
                   ),
@@ -117,6 +134,7 @@ class _AttendancePageState extends State<AttendancePage> {
               },
             ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: kPrimaryLightColor,
         onPressed: () async {
           await ApiService.submitAttendance(_students);
         },

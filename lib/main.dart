@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:student_task_manager/Screens/common_welcome.dart';
 import 'package:student_task_manager/Screens/event_screen_teacher.dart';
+import 'package:student_task_manager/Screens/home_screen_teacher.dart';
 import 'package:student_task_manager/component/google_sign_in.dart';
 import 'package:student_task_manager/constant.dart';
 import 'package:student_task_manager/Screens/EventScreen.dart';
@@ -55,6 +56,7 @@ class _MyAppState extends State<MyApp> {
             '/': (context) => CommonWelcome(),
             '/event': (context) => EventScreen(),
             '/eventte': (context) => EventScreenTeacher(),
+            '/tescreen': (context) => HomeScreenTeacher(),
             '/addEvent': (context) => AddEvent(),
             'text': (context) => MyApp()
           },

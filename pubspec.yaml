@@ -48,6 +48,9 @@ dependencies:
   firebase_messaging: ^14.2.1
   firebase_storage: ^11.0.10
   flutter_local_notifications: ^8.2.0
+  camera: ^0.10.3
+  file_picker: ^5.2.5
+  image_picker: ^0.8.6+2
   # flutter_local_notifications: ^8.2.0
   # flutter_appauth: ^4.2.1
 
