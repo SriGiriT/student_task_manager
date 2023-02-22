@@ -114,7 +114,7 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
   List<Map<String, dynamic>> reports = [];
   Map<String, int> reports_stats = {};
   final user = FirebaseAuth.instance.currentUser;
-  void fetchReports(String path) async {
+  Future<void> fetchReports(String path) async {
     final response = await http.post(Uri.parse(path));
     if (response.statusCode == 200) {
       setState(() {
@@ -142,7 +142,7 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
     }
   }
 
-  void fetchReportsStats(String path) async {
+  Future<void> fetchReportsStats(String path) async {
     final response = await http.post(Uri.parse(path));
     if (response.statusCode == 200) {
       setState(() {
@@ -203,6 +203,7 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
 
   @override
   Widget build(BuildContext context) {
+    fetchData(user);
     return MaterialApp(
       theme: ThemeData(primarySwatch: kMatColor),
       debugShowCheckedModeBanner: false,
@@ -235,133 +236,139 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
                   ))
             ],
           ),
-          body: RefreshIndicator(
-            onRefresh: () async {
-              setState(() {
-                _data = fetchData(user);
-              });
-              _data;
-            },
-            child: FutureBuilder(
-              future: _data,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return ListView.builder(
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            isLoading = false;
-                          });
-                          fetchReportsStats(
-                              "$kURL/teacher/event/stats/${snapshot.data![index]['eventId']}/III CSE C");
-                          fetchReports(
-                              "$kURL/teacher/event/stats-list/${snapshot.data![index]['eventId']}/III CSE C");
-                          setState(() {
-                            isLoading = true;
-                            _data = fetchData(user);
-                          });
-                          // print(
-                          //     jsonDecode(value.body).runtimeType);
-                          showModalBottomSheet(
-                            context: context,
-                            builder: (context) => SingleChildScrollView(
-                              child: Container(
-                                width: 500,
-                                height: 500,
-                                child: StudentList(
-                                  studentData: reports,
-                                  stats: reports_stats,
-                                ),
-                                padding: EdgeInsets.only(
-                                    bottom: MediaQuery.of(context)
-                                        .viewInsets
-                                        .bottom),
-                              ),
-                            ),
-                          );
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(16),
-                          margin: EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: kPrimaryLightColor,
-                            border: Border.all(color: Colors.grey),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                      (snapshot.data![index]['eventId']
-                                              .toString()) +
-                                          " ",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold)),
-                                  Text(
-                                    snapshot.data![index]['title'],
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 20),
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  ElevatedButton(
-                                    onPressed: () async {
-                                      snapshot.data![index].runtimeType;
-                                      showModalBottomSheet(
-                                        context: context,
-                                        builder: (context) =>
-                                            SingleChildScrollView(
-                                          child: Container(
-                                            color: Color(0xFF0A0E21),
-                                            width: 500,
-                                            height: 500,
-                                            child: Description(
-                                                descriptionData:
-                                                    snapshot.data![index]
-                                                        ['description']),
-                                            padding: EdgeInsets.only(
-                                                bottom: MediaQuery.of(context)
-                                                    .viewInsets
-                                                    .bottom),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    child: Text("description"),
-                                  ),
-                                ],
-                              ),
-                              // Text("Mark as done"),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                } else if (snapshot.hasError) {
-                  return Container(
-                      child: Center(
-                          child: Text(
-                    "${snapshot.error}",
-                    style: TextStyle(color: Colors.white, fontSize: 50),
-                  )));
-                }
-                return Center(
-                    child: CircularProgressIndicator(
-                  color: Colors.red,
-                ));
+          body: Stack(alignment: Alignment.center, children: [
+            RefreshIndicator(
+              onRefresh: () async {
+                setState(() {
+                  _data = fetchData(user);
+                });
+                _data;
               },
+              child: FutureBuilder(
+                future: _data,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return ListView.builder(
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () async {
+                            setState(() {
+                              isLoading = true;
+                            });
+                            await fetchReportsStats(
+                                "$kURL/teacher/event/stats/${snapshot.data![index]['eventId']}/III CSE C");
+                            await fetchReports(
+                                "$kURL/teacher/event/stats-list/${snapshot.data![index]['eventId']}/III CSE C");
+                            setState(() {
+                              isLoading = false;
+                              _data = fetchData(user);
+                            });
+                            // print(
+                            //     jsonDecode(value.body).runtimeType);
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (context) => SingleChildScrollView(
+                                child: Container(
+                                  width: 500,
+                                  height: 500,
+                                  child: StudentList(
+                                    studentData: reports,
+                                    stats: reports_stats,
+                                  ),
+                                  padding: EdgeInsets.only(
+                                      bottom: MediaQuery.of(context)
+                                          .viewInsets
+                                          .bottom),
+                                ),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(16),
+                            margin: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: kPrimaryLightColor,
+                              border: Border.all(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                        (snapshot.data![index]['eventId']
+                                                .toString()) +
+                                            " ",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold)),
+                                    Text(
+                                      snapshot.data![index]['title'],
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 20),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    ElevatedButton(
+                                      onPressed: () async {
+                                        snapshot.data![index].runtimeType;
+                                        showModalBottomSheet(
+                                          context: context,
+                                          builder: (context) =>
+                                              SingleChildScrollView(
+                                            child: Container(
+                                              color: Color(0xFF0A0E21),
+                                              width: 500,
+                                              height: 500,
+                                              child: Description(
+                                                  descriptionData:
+                                                      snapshot.data![index]
+                                                          ['description']),
+                                              padding: EdgeInsets.only(
+                                                  bottom: MediaQuery.of(context)
+                                                      .viewInsets
+                                                      .bottom),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: Text("description"),
+                                    ),
+                                  ],
+                                ),
+                                // Text("Mark as done"),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  } else if (snapshot.hasError) {
+                    return Container(
+                        child: Center(
+                            child: Text(
+                      "${snapshot.error}",
+                      style: TextStyle(color: Colors.white, fontSize: 50),
+                    )));
+                  }
+                  return Center(
+                      child: CircularProgressIndicator(
+                    color: Colors.red,
+                  ));
+                },
+              ),
             ),
-          ),
+            if (isLoading)
+              CircularProgressIndicator(
+                color: Colors.red,
+              )
+          ]),
           floatingActionButton: FloatingActionButton(
             backgroundColor: kPrimaryLightColor,
             onPressed: () {
