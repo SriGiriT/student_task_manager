@@ -14,6 +14,7 @@ import 'package:student_task_manager/component/google_sign_in.dart';
 import 'package:student_task_manager/constant.dart';
 
 import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 bool isLoading = false;
@@ -26,6 +27,11 @@ class TeacherScreen extends StatefulWidget {
 }
 
 class _TeacherScreenState extends State<TeacherScreen> {
+  @override
+  void initState() {
+    ApiService.fetchStudents();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,7 +72,7 @@ class _TeacherScreenState extends State<TeacherScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AttendancePage(),
+                    builder: (context) => TakeOrRefer(),
                   ),
                 );
               }, Icons.check),
@@ -74,10 +80,75 @@ class _TeacherScreenState extends State<TeacherScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ODStudentScreen(),
+                    builder: (context) => OdStudent(),
                   ),
                 );
               }, Icons.add)
+              //   ],
+              // )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class TakeOrRefer extends StatefulWidget {
+  const TakeOrRefer({super.key});
+
+  @override
+  State<TakeOrRefer> createState() => _TakeOrReferState();
+}
+
+class _TakeOrReferState extends State<TakeOrRefer> {
+  @override
+  Widget build(BuildContext context) {
+    ApiService.fetchStudents();
+    return Scaffold(
+      backgroundColor: Color(0xFF0A0E21),
+      appBar: AppBar(
+        title: Center(child: Text('Staff Page')),
+        actions: <Widget>[
+          TextButton(
+              onPressed: () {
+                final provider =
+                    Provider.of<GoogleSignInProvider>(context, listen: false);
+                provider.logout();
+              },
+              child: Text(
+                "Logout",
+                style: TextStyle(color: Colors.white),
+              ))
+        ],
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: GridView(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2),
+            padding: const EdgeInsets.all(8),
+            // crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Listofgames(1, "Take Attendance", () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AttendancePage(),
+                  ),
+                );
+              }, Icons.task),
+              Listofgames(2, "Attendance data", () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AbsenteesPage(
+                      absentees: ab, odList: od,
+                    ),
+                  ),
+                );
+              }, Icons.check)
               //   ],
               // )
             ],
@@ -94,21 +165,21 @@ class EventScreenTeacher extends StatefulWidget {
 }
 
 class _EventScreenTeacherState extends State<EventScreenTeacher> {
-  void showNotification() {
-    flutterLocalNotificationsPlugin.show(
-        0,
-        "Testing",
-        "test ",
-        NotificationDetails(
-            android: AndroidNotificationDetails(
-          channel.id,
-          channel.name,
-          channel.description,
-          importance: Importance.high,
-          color: Colors.blue,
-          playSound: true,
-        )));
-  }
+  // void showNotification() {
+  //   flutterLocalNotificationsPlugin.show(
+  //       0,
+  //       "Testing",
+  //       "test ",
+  //       NotificationDetails(
+  //           android: AndroidNotificationDetails(
+  //         channel.id,
+  //         channel.name,
+  //         channel.description,
+  //         importance: Importance.high,
+  //         color: Colors.blue,
+  //         playSound: true,
+  //       )));
+  // }
 
   late Future<List<dynamic>> _data;
   List<Map<String, dynamic>> reports = [];
@@ -160,43 +231,43 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
 
   @override
   void initState() {
-    super.initState();
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      RemoteNotification notification = message.notification!;
-      AndroidNotification? android = message.notification!.android;
-      if (notification != null && android != null) {
-        flutterLocalNotificationsPlugin.show(
-            notification.hashCode,
-            notification.title,
-            notification.body,
-            NotificationDetails(
-                android: AndroidNotificationDetails(
-              channel.id,
-              channel.name,
-              channel.description,
-              color: Colors.blue,
-            )));
-      }
-    });
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('A new onMessageOpenedApp event was published!');
-      RemoteNotification notification = message.notification!;
-      AndroidNotification android = message.notification!.android!;
-      if (notification != null && android != null) {
-        showDialog(
-            context: context,
-            builder: (_) {
-              return AlertDialog(
-                title: Text(notification.title!),
-                content: SingleChildScrollView(
-                    child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [Text(notification.body!)],
-                )),
-              );
-            });
-      }
-    });
+    // super.initState();
+    // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    //   RemoteNotification notification = message.notification!;
+    //   AndroidNotification? android = message.notification!.android;
+    //   if (notification != null && android != null) {
+    //     flutterLocalNotificationsPlugin.show(
+    //         notification.hashCode,
+    //         notification.title,
+    //         notification.body,
+    //         NotificationDetails(
+    //             android: AndroidNotificationDetails(
+    //           channel.id,
+    //           channel.name,
+    //           channel.description,
+    //           color: Colors.blue,
+    //         )));
+    //   }
+    // });
+    // FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    //   print('A new onMessageOpenedApp event was published!');
+    //   RemoteNotification notification = message.notification!;
+    //   AndroidNotification android = message.notification!.android!;
+    //   if (notification != null && android != null) {
+    //     showDialog(
+    //         context: context,
+    //         builder: (_) {
+    //           return AlertDialog(
+    //             title: Text(notification.title!),
+    //             content: SingleChildScrollView(
+    //                 child: Column(
+    //               crossAxisAlignment: CrossAxisAlignment.start,
+    //               children: [Text(notification.body!)],
+    //             )),
+    //           );
+    //         });
+    //   }
+    // });
     super.initState();
     _data = fetchData(user);
   }
@@ -284,66 +355,114 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
                               ),
                             );
                           },
-                          child: Container(
-                            padding: EdgeInsets.all(16),
-                            margin: EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: kPrimaryLightColor,
-                              border: Border.all(color: Colors.grey),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                        (snapshot.data![index]['eventId']
-                                                .toString()) +
-                                            " ",
+                          child: Expanded(
+                            child: Container(
+                              padding: EdgeInsets.all(16),
+                              margin: EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: kPrimaryLightColor,
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Column(
+                                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                // crossAxisAlignment: CrossAxisAlignment.,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                            (snapshot.data![index]['title']
+                                                    .toString()) +
+                                                " ",
+                                            style: TextStyle(
+                                                color: Colors.orange.shade300,
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold)),
+                                        Text(
+                                          snapshot.data![index]['eventId']
+                                              .toString(),
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      alignment: Alignment.topLeft,
+                                      child: Text(
+                                        snapshot.data![index]['description'],
                                         style: TextStyle(
-                                            color: Colors.white,
+                                            color: Colors.blueAccent,
                                             fontSize: 20,
-                                            fontWeight: FontWeight.bold)),
-                                    Text(
-                                      snapshot.data![index]['title'],
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 20),
+                                            fontWeight: FontWeight.bold),
+                                      ),
                                     ),
-                                  ],
-                                ),
-                                Column(
-                                  children: [
-                                    ElevatedButton(
-                                      onPressed: () async {
-                                        snapshot.data![index].runtimeType;
-                                        showModalBottomSheet(
-                                          context: context,
-                                          builder: (context) =>
-                                              SingleChildScrollView(
-                                            child: Container(
-                                              color: Color(0xFF0A0E21),
-                                              width: 500,
-                                              height: 500,
-                                              child: Description(
-                                                  descriptionData:
-                                                      snapshot.data![index]
-                                                          ['description']),
-                                              padding: EdgeInsets.only(
-                                                  bottom: MediaQuery.of(context)
-                                                      .viewInsets
-                                                      .bottom),
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      child: Text("description"),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                            
+                                                snapshot.data![index]
+                                                        ['fromDate']
+                                                    .toString()
+                                                    .substring(8, 10) +
+                                                snapshot.data![index]
+                                                        ['fromDate']
+                                                    .toString()
+                                                    .substring(4, 7) +
+                                                "-" +
+                                                snapshot.data![index]
+                                                        ['fromDate']
+                                                    .toString()
+                                                    .substring(2, 4) +"  "+
+                                                timeText(snapshot.data![index]
+                                                        ['fromDate']
+                                                    .toString()
+                                                    .substring(11, 19)) ,
+                                            style: TextStyle(
+                                                color: Colors.green.shade300,
+                                                fontWeight: FontWeight.bold)),
+                                                Text("|", style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold)),
+                                        Text(
+                                          snapshot.data![index]['endDate']
+                                                  .toString()
+                                                  .substring(8, 10) +
+                                              snapshot.data![index]['endDate']
+                                                  .toString()
+                                                  .substring(4, 7) +
+                                              "-" +
+                                              snapshot.data![index]['endDate']
+                                                  .toString()
+                                                  .substring(2, 4) +"  "+
+                                              timeText(
+                                                snapshot.data![index]['endDate']
+                                                    .toString()
+                                                    .substring(11, 19),
+                                              ),
+                                          style: TextStyle(
+                                              color: Colors.red.shade300,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                                // Text("Mark as done"),
-                              ],
+                                  )
+                                ],
+                              ),
                             ),
                           ),
                         );
@@ -406,6 +525,14 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
       // If that call was not successful, throw an error.
       throw Exception('404 Error');
     }
+  }
+
+  String timeText(String string) {
+    String timeString = "14:30:00";
+    DateTime time = DateTime.parse("1970-01-01 $string");
+
+    String formattedTime = DateFormat('h:mm a').format(time);
+    return formattedTime;
   }
 }
 

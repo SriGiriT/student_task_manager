@@ -8,6 +8,8 @@ import 'package:student_task_manager/constant.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 bool isLoading = false;
+List<String> abse = [];
+List<String> ods = [];
 
 class AttendanceScreen extends StatefulWidget {
   const AttendanceScreen({super.key});
@@ -36,9 +38,35 @@ class ApiService {
       // print(key);
       // print(value);
       value.forEach((key1, value1) {
-        students.add(Student(id: key, name: key1, present: value1));
+        // print(key + " " + key1 + " " + value1);
+        // value1['isPresent'] +
+        List<bool> li = [];
+        students.add(Student(
+            id: key,
+            name: key1,
+            present: value1['isPresent'],
+            od: value1['onOd']));
+        // students
+        //     .add(Student(id: key, name: key1, present: value2, od: value2));
+        //   students.add(Student(
+        //       id: key,
+        //       name: key1,
+        //       present: value1['isPresent'],
+        //       od: value1['isOd']));
       });
     });
+    abse = await students
+        .where((student) => !student.present)
+        .toList()
+        .map((student) => student.id.substring(6))
+        .toList();
+    ods = await students
+        .where((student) => student.od)
+        .toList()
+        .map((e) => e.id.substring(6))
+        .toList();
+    ab = await abse;
+    od = await ods;
     return students;
   }
 
@@ -120,42 +148,59 @@ class _AttendancePageState extends State<AttendancePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFF0A0E21),
-      appBar: AppBar(title: Text('Attendance')),
-      body: Stack(alignment: Alignment.center, children: [
-        ListView.builder(
-          itemCount: _students.length,
-          itemBuilder: (context, index) {
-            final student = _students[index];
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  student.present = !student.present;
-                });
-              },
-              child: ListTile(
-                tileColor: student.present
-                    ? Colors.green.shade300
-                    : Colors.red.shade300,
-                title: Text(
-                  "${student.id} - ${student.name}",
-                  style: TextStyle(color: Colors.white, fontSize: 18),
+      appBar: AppBar(
+        title: Text('Attendance'),
+        actions: [
+          IconButton(
+            tooltip: 'Select all',
+            onPressed: () => SelectAll(),
+            icon: Icon(Icons.select_all),
+          ),
+          Center(
+              child: GestureDetector(
+                  onTap: SelectAll, child: Text("Select all  ")))
+        ],
+      ),
+      body: Stack(
+        alignment: Alignment.center,
+        children: [
+          ListView.builder(
+            itemCount: _students.length,
+            itemBuilder: (context, index) {
+              final student = _students[index];
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    student.present = !student.present;
+                  });
+                },
+                child: ListTile(
+                  tileColor: student.present
+                      ? Colors.green.shade300
+                      : student.od
+                          ? Colors.orange.shade300
+                          : Colors.red.shade300,
+                  title: Text(
+                    "${student.id} - ${student.name}",
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                  trailing: Checkbox(
+                    value: student.present,
+                    onChanged: (value) {
+                      student.present = value!;
+                      _updateAttendance(index, value);
+                    },
+                  ),
                 ),
-                trailing: Checkbox(
-                  value: student.present,
-                  onChanged: (value) {
-                    student.present = value!;
-                    _updateAttendance(index, value);
-                  },
-                ),
-              ),
-            );
-          },
-        ),
-        if (isLoading)
-          CircularProgressIndicator(
-            color: Colors.red,
-          )
-      ]),
+              );
+            },
+          ),
+          if (isLoading)
+            CircularProgressIndicator(
+              color: Colors.red,
+            )
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: kPrimaryLightColor,
         onPressed: () async {
@@ -165,21 +210,32 @@ class _AttendancePageState extends State<AttendancePage> {
           await ApiService.submitAttendance(_students);
           final absentStudents =
               _students.where((student) => !student.present).toList();
+          final odStudents = _students.where((element) => element.od);
           final absentIds =
               absentStudents.map((student) => student.id.substring(6)).toList();
+          final odIds =
+              odStudents.map((student) => student.id.substring(6)).toList();
           setState(() {
             isLoading = false;
           });
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => AbsenteesPage(
-                        absentees: absentIds,
-                      )));
+                  builder: (context) =>
+                      AbsenteesPage(absentees: absentIds, odList: odIds)));
         },
         child: Icon(Icons.check),
       ),
     );
+  }
+
+  SelectAll() {
+    for (int i = 0; i < _students.length; i++) {
+      _students[i].present = true;
+    }
+    setState(() {
+      _students;
+    });
   }
 }
 
@@ -187,27 +243,57 @@ class Student {
   String id;
   String name;
   bool present;
-  Student({required this.id, required this.name, this.present = false});
+  bool od;
+  Student(
+      {required this.id,
+      required this.name,
+      this.present = false,
+      this.od = false});
 }
 
-class AbsenteesPage extends StatelessWidget {
+class AbsenteesPage extends StatefulWidget {
   final List<String> absentees;
+  final List<String> odList;
 
-  AbsenteesPage({required this.absentees});
+  AbsenteesPage({required this.absentees, required this.odList});
+
+  @override
+  State<AbsenteesPage> createState() => _AbsenteesPageState();
+}
+
+class _AbsenteesPageState extends State<AbsenteesPage> {
+  void initState() {
+    super.initState();
+    _fetchStudents();
+  }
+
+  Future<void> _fetchStudents() async {
+    setState(() {
+      isLoading = true;
+    });
+    final students = await ApiService.fetchStudents();
+    setState(() {
+      isLoading = false;
+    });
+  }
 
   Future<void> copyToClipboard(BuildContext context) async {
-    final String ids = absentees.join(", ");
-    await Clipboard.setData(ClipboardData(text: ids));
+    final String ids = widget.absentees.join(", ");
+    final String ods = widget.odList.join(", ");
+    String clip = "Absentees Ids\n" + ids + "\n\nOd Ids" + ods;
+    await Clipboard.setData(ClipboardData(text: clip));
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text("Absentees' IDs copied to clipboard"),
+      content: Text("Absentees' And Od IDs copied to clipboard"),
     ));
   }
 
   Future<void> shareOnWhatsApp() async {
     final user = FirebaseAuth.instance.currentUser;
-    final String ids = absentees.join(", ");
-    final String url =
-        "whatsapp://send?text=Absentees%27%20IDs:%20\n${Uri.parse(ids)}";
+    String ids = "Absentees%27%20IDs:%20\n";
+    ids += widget.absentees.join(", ");
+    ids += "\n\nOd:\n";
+    ids += widget.odList.join(", ");
+    final String url = "whatsapp://send?text=${ids}";
 
     //"whatsapp://send?phone=+91{}&text=hi";
 
@@ -241,58 +327,87 @@ class AbsenteesPage extends StatelessWidget {
         child: Center(
           child: Padding(
             padding: EdgeInsets.all(16.0),
-            child: Container(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Absentees' IDs",
-                    style: TextStyle(fontSize: 24.0, color: Colors.white),
-                  ),
-                  SizedBox(height: 16.0),
-                  GestureDetector(
-                    onTap: () {
-                      copyToClipboard(context);
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 16.0, horizontal: 24.0),
-                      decoration: BoxDecoration(
-                        color: Colors.red.shade300,
-                        borderRadius: BorderRadius.circular(8.0),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Absentees' IDs",
+                        style: TextStyle(fontSize: 24.0, color: Colors.white),
                       ),
-                      child: Text(
-                        absentees.join(", "),
-                        style: TextStyle(fontSize: 18.0),
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      shareOnWhatsApp();
-                    },
-                    child: Container(
-                      margin: EdgeInsets.all(20),
-                      width: 150,
-                      height: 38,
-                      decoration: BoxDecoration(
-                          color: Colors.green.shade300,
-                          borderRadius: BorderRadius.circular(8)),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.whatsapp,
+                      SizedBox(height: 16.0),
+                      GestureDetector(
+                        onTap: () {
+                          copyToClipboard(context);
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 16.0, horizontal: 24.0),
+                          decoration: BoxDecoration(
+                            color: Colors.red.shade300,
+                            borderRadius: BorderRadius.circular(8.0),
                           ),
-                          Container(
-                            child: Text(" Whatsapp"),
-                          )
-                        ],
+                          child: Text(
+                            widget.absentees.join(", "),
+                            style: TextStyle(fontSize: 18.0),
+                          ),
+                        ),
                       ),
-                    ),
-                  )
-                ],
-              ),
+                      SizedBox(height: 16.0),
+                      Text(
+                        "OD IDs",
+                        style: TextStyle(fontSize: 24.0, color: Colors.white),
+                      ),
+                      SizedBox(height: 16.0),
+                      GestureDetector(
+                        onTap: () {
+                          copyToClipboard(context);
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 16.0, horizontal: 24.0),
+                          decoration: BoxDecoration(
+                            color: Colors.red.shade300,
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: Text(
+                            widget.odList.join(", "),
+                            style: TextStyle(fontSize: 18.0),
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          shareOnWhatsApp();
+                        },
+                        child: Container(
+                          margin: EdgeInsets.all(20),
+                          width: 150,
+                          height: 38,
+                          decoration: BoxDecoration(
+                              color: Colors.green.shade300,
+                              borderRadius: BorderRadius.circular(8)),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.whatsapp,
+                              ),
+                              Container(
+                                child: Text(" Whatsapp"),
+                              )
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                if(isLoading)CircularProgressIndicator(color: Colors.red,)
+              ],
             ),
           ),
         ),

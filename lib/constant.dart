@@ -3,10 +3,12 @@ import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
+import 'package:student_task_manager/Screens/attendance_screen.dart';
 
 String kURL = "https://tidy-puma-7.telebit.io";
 const kPrimaryColor = Color(0xFF1D1E33);
@@ -55,21 +57,8 @@ class _DescriptionState extends State<Description> {
   }
 }
 
-const AndroidNotificationChannel channel = AndroidNotificationChannel(
-    'high_importance_channel',
-    'High Importance',
-    'This channel is used for important notifications.',
-    importance: Importance.high,
-    playSound: true);
-
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
-
-Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-  print('A bg message just showed up : ${message.messageId}');
-}
-
+List<String> ab = [];
+List<String> od = [];
 String to = "";
 
 MaterialColor kMatColor = MaterialColor(
@@ -102,8 +91,6 @@ Future<List<dynamic>> fetchData(User? user) async {
   }
 }
 
-
-
 class Listofgames extends StatelessWidget {
   Listofgames(this.ind, this.text, this.pressed, this.img);
   String text;
@@ -128,12 +115,20 @@ class Listofgames extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(img, size: 34,color: Colors.white,),
-              SizedBox(height: 8,),
-              Text(text, style: TextStyle(color: Colors.white, fontSize: 24),)
+              Icon(
+                img,
+                size: 34,
+                color: Colors.white,
+              ),
+              SizedBox(
+                height: 8,
+              ),
+              Text(
+                text,
+                style: TextStyle(color: Colors.white, fontSize: 24),
+              )
             ],
           ),
-          
         ),
       ),
     );
