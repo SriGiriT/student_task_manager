@@ -112,6 +112,7 @@ class _AddEventState extends State<AddEvent> {
                 height: 100,
               ),
               RoundedInputField(
+                isList: false,
                   isDT: false,
                   hintText: "Title",
                   onTap: () {},
@@ -123,6 +124,7 @@ class _AddEventState extends State<AddEvent> {
                   isDes: false),
               RoundedInputField(
                 isDT: false,
+                isList: false,
                 isDes: true,
                 times: 0.9,
                 hintText: "Description",
@@ -136,6 +138,7 @@ class _AddEventState extends State<AddEvent> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   RoundedInputField(
+                    isList: false,
                     isDT: true,
                     isDes: false,
                     times: 0.45,
@@ -174,6 +177,7 @@ class _AddEventState extends State<AddEvent> {
                     },
                   ),
                   RoundedInputField(
+                    isList: false,
                     isDT: true,
                     isDes: false,
                     times: 0.45,
@@ -212,6 +216,7 @@ class _AddEventState extends State<AddEvent> {
                 ],
               ),
               TextFieldContainer(
+                isLis: false,
                 width: 0.9,
                 isDescription: false,
                 child: Row(

@@ -32,7 +32,7 @@ class _ODStudentScreenState extends State<ODStudentScreen> {
   }
 
   Future<void> _uploadImage(File imageFile) async {
-    final url = Uri.parse('$kURL/addOd/20eucs137');
+    final url = Uri.parse('$kURL/student/addOd/20eucs137');
     final request = http.MultipartRequest('POST', url)
       ..files.add(await http.MultipartFile.fromPath('image', imageFile.path));
     print(http.MultipartFile.fromPath('image', imageFile.path).runtimeType);
@@ -60,6 +60,7 @@ class _ODStudentScreenState extends State<ODStudentScreen> {
           children: [
             RoundedInputField(
               isDT: false,
+              isList: false,
               isDes: true,
               times: 0.9,
               hintText: "Description",
@@ -73,6 +74,7 @@ class _ODStudentScreenState extends State<ODStudentScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 RoundedInputField(
+                  isList: false,
                   isDT: true,
                   isDes: false,
                   times: 0.45,
@@ -111,6 +113,7 @@ class _ODStudentScreenState extends State<ODStudentScreen> {
                   },
                 ),
                 RoundedInputField(
+                  isList: false,
                   isDT: true,
                   isDes: false,
                   times: 0.45,
@@ -147,6 +150,7 @@ class _ODStudentScreenState extends State<ODStudentScreen> {
                   },
                 ),
                 RoundedInputField(
+                  isList: false,
                     hintText: "student rno",
                     isDT: false,
                     onTap: () {},
@@ -157,6 +161,7 @@ class _ODStudentScreenState extends State<ODStudentScreen> {
                     times: 0.8,
                     isDes: true),
                 RoundedInputField(
+                  isList: false,
                     hintText: "teacher rno",
                     isDT: false,
                     onTap: () {},

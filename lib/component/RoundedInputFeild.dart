@@ -9,6 +9,7 @@ class RoundedInputField extends StatefulWidget {
   final ValueChanged<String> onChanged;
   final VoidCallback onTap;
   final bool isDes;
+  final bool isList;
   final bool isDT;
   final double times;
   const RoundedInputField(
@@ -18,6 +19,7 @@ class RoundedInputField extends StatefulWidget {
       required this.icon,
       required this.onChanged,
       required this.times,
+      required this.isList,
       required this.isDes});
 
   @override
@@ -29,6 +31,7 @@ class _RoundedInputFieldState extends State<RoundedInputField> {
   Widget build(BuildContext context) {
     return TextFieldContainer(
       width: widget.times,
+      isLis : widget.isList,
       isDescription: widget.isDes,
       child: TextField(
         readOnly: widget.isDT,
@@ -37,7 +40,11 @@ class _RoundedInputFieldState extends State<RoundedInputField> {
         // widget.onChanged;
         onChanged: widget.onChanged,
         cursorColor: Colors.white,
-        maxLines: widget.isDes ? 10 : 1,
+        maxLines: widget.isDes
+            ? widget.isList
+                ? 4
+                : 10
+            : 1,
         decoration: InputDecoration(
           hintStyle: TextStyle(color: Colors.white),
           icon: Icon(
