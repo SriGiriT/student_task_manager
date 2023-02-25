@@ -9,6 +9,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:student_task_manager/Screens/attendance_screen.dart';
+import 'package:intl/intl.dart';
 
 String kURL = "https://tidy-puma-7.telebit.io";
 const kPrimaryColor = Color(0xFF1D1E33);
@@ -76,6 +77,14 @@ MaterialColor kMatColor = MaterialColor(
     900: Color(0xFF0A0E21),
   },
 );
+
+  String timeText(String string) {
+    String timeString = "14:30:00";
+    DateTime time = DateTime.parse("1970-01-01 $string");
+
+    String formattedTime = DateFormat('h:mm a').format(time);
+    return formattedTime;
+  }
 
 Future<List<dynamic>> fetchData(User? user) async {
   final response = await http.post(Uri.parse(

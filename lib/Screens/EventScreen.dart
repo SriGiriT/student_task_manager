@@ -4,9 +4,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:student_task_manager/Screens/attendance_screen.dart';
 import 'package:student_task_manager/Screens/event_screen_teacher.dart';
+import 'package:student_task_manager/Screens/od_page_staffs.dart';
 import 'package:student_task_manager/component/google_sign_in.dart';
 import 'package:student_task_manager/constant.dart';
+
+import 'od_page_student.dart';
 
 class EventScreen extends StatefulWidget {
   @override
@@ -14,6 +18,70 @@ class EventScreen extends StatefulWidget {
 }
 
 bool isLoading = false;
+
+class StudentScreen extends StatefulWidget {
+  const StudentScreen({super.key});
+
+  @override
+  State<StudentScreen> createState() => _StudentScreenState();
+}
+
+class _StudentScreenState extends State<StudentScreen> {
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Color(0xFF0A0E21),
+      appBar: AppBar(
+        title: Center(child: Text('Student Page')),
+        actions: <Widget>[
+          TextButton(
+              onPressed: () {
+                final provider =
+                    Provider.of<GoogleSignInProvider>(context, listen: false);
+                provider.logout();
+              },
+              child: Text(
+                "Logout",
+                style: TextStyle(color: Colors.white),
+              ))
+        ],
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: GridView(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2),
+            padding: const EdgeInsets.all(8),
+            // crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Listofgames(1, "Events", () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EventScreen(),
+                  ),
+                );
+              }, Icons.task),
+              Listofgames(2, "On Duty", () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => OdStudent(),
+                  ),
+                );
+              }, Icons.add)
+              //   ],
+              // )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 
 class _EventScreenState extends State<EventScreen> {
   late Future<List<dynamic>> _data;
@@ -67,59 +135,8 @@ class _EventScreenState extends State<EventScreen> {
                             itemCount: snapshot.data!.length,
                             itemBuilder: (context, index) {
                               return GestureDetector(
-                                onTap: () {
-                                  snapshot.data![index].runtimeType;
-                                  showModalBottomSheet(
-                                    context: context,
-                                    builder: (context) => SingleChildScrollView(
-                                      child: Container(
-                                        width: 500,
-                                        height: 500,
-                                        color: Color(0xFF0A0E21),
-                                        child: Description(
-                                            descriptionData: snapshot.data![index]
-                                                ['description']),
-                                        padding: EdgeInsets.only(
-                                            bottom: MediaQuery.of(context)
-                                                .viewInsets
-                                                .bottom),
-                                      ),
-                                    ),
-                                  );
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.all(16),
-                                  margin: EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: kPrimaryLightColor,
-                                    border: Border.all(color: Colors.grey),
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Row(
-                                        children: [
-                                          Text(
-                                              (snapshot.data![index]['eventId']
-                                                      .toString()) +
-                                                  " ",
-                                              style: TextStyle(
-                                                  fontSize: 20,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold)),
-                                          Text(
-                                            snapshot.data![index]['title'],
-                                            style: TextStyle(
-                                                fontSize: 20,
-                                                color: Colors.white),
-                                          ),
-                                        ],
-                                      ),
-                                      ElevatedButton(
-                                        onPressed: () async {
-                                          if (await onBackPressed(context,
+                                onLongPress: () async{
+                                  if (await onBackPressed(context,
                                               "Are you sure Mark as complete")) {
                                             setState(() {
                                               isLoading = true;
@@ -132,13 +149,120 @@ class _EventScreenState extends State<EventScreen> {
                                               _data = fetchData(user);
                                             });
                                           }
-                                        },
-                                        child: Text("Mark as done"),
-                                      ),
-                                      // Text("Mark as done"),
-                                    ],
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.all(16),
+                                  margin: EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: kPrimaryLightColor,
+                                    border: Border.all(color: Colors.grey),
+                                    borderRadius: BorderRadius.circular(5),
                                   ),
-                                ),
+                                  child: 
+
+
+                                  Column(
+                                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                // crossAxisAlignment: CrossAxisAlignment.,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                            (snapshot.data![index]['title']
+                                                    .toString()) +
+                                                " ",
+                                            style: TextStyle(
+                                                color: Colors.orange.shade300,
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold)),
+                                        Text(
+                                          snapshot.data![index]['eventId']
+                                              .toString(),
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      alignment: Alignment.topLeft,
+                                      child: Text(
+                                        snapshot.data![index]['description'],
+                                        style: TextStyle(
+                                            color: Colors.blueAccent,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                            snapshot.data![index]['fromDate']
+                                                    .toString()
+                                                    .substring(8, 10) +
+                                                snapshot.data![index]
+                                                        ['fromDate']
+                                                    .toString()
+                                                    .substring(4, 7) +
+                                                "-" +
+                                                snapshot.data![index]
+                                                        ['fromDate']
+                                                    .toString()
+                                                    .substring(2, 4) +
+                                                "  " +
+                                                timeText(snapshot.data![index]
+                                                        ['fromDate']
+                                                    .toString()
+                                                    .substring(11, 19)),
+                                            style: TextStyle(
+                                                color: Colors.green.shade300,
+                                                fontWeight: FontWeight.bold)),
+                                        Text("|",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold)),
+                                        Text(
+                                          snapshot.data![index]['endDate']
+                                                  .toString()
+                                                  .substring(8, 10) +
+                                              snapshot.data![index]['endDate']
+                                                  .toString()
+                                                  .substring(4, 7) +
+                                              "-" +
+                                              snapshot.data![index]['endDate']
+                                                  .toString()
+                                                  .substring(2, 4) +
+                                              "  " +
+                                              timeText(
+                                                snapshot.data![index]['endDate']
+                                                    .toString()
+                                                    .substring(11, 19),
+                                              ),
+                                          style: TextStyle(
+                                              color: Colors.red.shade300,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
                               );
                             },
                           );

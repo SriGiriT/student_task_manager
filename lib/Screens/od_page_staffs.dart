@@ -54,6 +54,7 @@ class OdStudent extends StatefulWidget {
 class _OdStudentState extends State<OdStudent> {
   var startDate = null;
   var endDate = null;
+  File? _imageFile = null;
   String studentRegNoList = "";
   String mentorNameListString = "";
   final _formKey = GlobalKey<FormState>();
@@ -80,13 +81,13 @@ class _OdStudentState extends State<OdStudent> {
 
   late String text;
   Future<void> _submitForm(
-      String text, List<String> studentList, List<String> mentorList) async {
+      String text, List<String> studentList, List<String> mentorList, Uint8List imageFile) async {
     if (_formKey.currentState!.validate()) {
       print(
           '${startDate.toString().substring(0, 10)} IST ${startDate.toString().substring(11, 19)}');
       final formCommand = OnDutyFormCommand(
         description: text,
-        document: _document!,
+        document: imageFile,
         studentRollNoList: studentList,
         mentorNameList: mentorList,
         fromDate:
@@ -249,23 +250,45 @@ class _OdStudentState extends State<OdStudent> {
                     times: 0.9,
                     isDes: true),
                 SizedBox(height: 8.0),
-                RoundedButton(
-                    sizee: 0.9,
-                    text: _document == null
-                        ? "Select Document"
-                        : "Document Selected",
-                    press: () {
-                      _pickDocument();
-                    }),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    RoundedButton(
+                        sizee: 0.44,
+                        text: "Select File",
+                        press: () async {
+                          final pickedFile = await ImagePicker()
+                              .pickImage(source: ImageSource.gallery);
+                          setState(() {
+                            _imageFile = File(pickedFile!.path);
+                          });
+                        }),
+                        SizedBox(width: 8.0,),
+                    RoundedButton(
+                      sizee: 0.44,
+                      text: "Take Photo",
+                      press: () async {
+                        final pickedFile = await ImagePicker()
+                            .pickImage(source: ImageSource.camera);
+                        setState(() {
+                          _imageFile = File(pickedFile!.path);
+                        });
+                      },
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8.0,),
+                if(_imageFile != null) Image.file(_imageFile!),
                 SizedBox(height: 8.0),
-                RoundedButton(
+                if(_imageFile != null) RoundedButton(
                   sizee: 0.8,
                   text: "Submit",
                   press: () {
                     _submitForm(text, studentRegNoList.split(", "),
-                        mentorNameListString.split(", "));
+                        mentorNameListString.split(", "), _imageFile!.readAsBytesSync());
                   },
                 ),
+                
               ],
             ),
           ),

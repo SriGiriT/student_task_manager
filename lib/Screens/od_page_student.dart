@@ -7,9 +7,6 @@ import 'package:student_task_manager/constant.dart';
 
 import '../component/RoundedInputFeild.dart';
 
-void main() {
-  runApp(ODStudentScreen());
-}
 
 class ODStudentScreen extends StatefulWidget {
   @override
@@ -70,7 +67,7 @@ class _ODStudentScreenState extends State<ODStudentScreen> {
               icon: Icons.description,
               onTap: () {},
             ),
-            Row(
+            Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 RoundedInputField(

@@ -14,7 +14,6 @@ import 'package:student_task_manager/component/google_sign_in.dart';
 import 'package:student_task_manager/constant.dart';
 
 import 'package:flutter/cupertino.dart';
-import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 bool isLoading = false;
@@ -144,7 +143,8 @@ class _TakeOrReferState extends State<TakeOrRefer> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => AbsenteesPage(
-                      absentees: ab, odList: od,
+                      absentees: ab,
+                      odList: od,
                     ),
                   ),
                 );
@@ -335,6 +335,12 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
                               isLoading = false;
                               _data = fetchData(user);
                             });
+                            // var x = await reports;
+                            // for (Map<String, dynamic> m in x) {
+                            //   m.forEach((key, value) {
+                            //     print('$key $value');
+                            //   });
+                            // }
                             // print(
                             //     jsonDecode(value.body).runtimeType);
                             showModalBottomSheet(
@@ -364,7 +370,8 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
                                 border: Border.all(color: Colors.grey),
                                 borderRadius: BorderRadius.circular(5),
                               ),
-                              child: Column(
+                              child: 
+                              Column(
                                 // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 // crossAxisAlignment: CrossAxisAlignment.,
                                 mainAxisAlignment:
@@ -373,7 +380,8 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
                                             (snapshot.data![index]['title']
@@ -414,9 +422,7 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                            
-                                                snapshot.data![index]
-                                                        ['fromDate']
+                                            snapshot.data![index]['fromDate']
                                                     .toString()
                                                     .substring(8, 10) +
                                                 snapshot.data![index]
@@ -427,15 +433,17 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
                                                 snapshot.data![index]
                                                         ['fromDate']
                                                     .toString()
-                                                    .substring(2, 4) +"  "+
+                                                    .substring(2, 4) +
+                                                "  " +
                                                 timeText(snapshot.data![index]
                                                         ['fromDate']
                                                     .toString()
-                                                    .substring(11, 19)) ,
+                                                    .substring(11, 19)),
                                             style: TextStyle(
                                                 color: Colors.green.shade300,
                                                 fontWeight: FontWeight.bold)),
-                                                Text("|", style: TextStyle(
+                                        Text("|",
+                                            style: TextStyle(
                                                 color: Colors.white,
                                                 fontWeight: FontWeight.bold)),
                                         Text(
@@ -448,7 +456,8 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
                                               "-" +
                                               snapshot.data![index]['endDate']
                                                   .toString()
-                                                  .substring(2, 4) +"  "+
+                                                  .substring(2, 4) +
+                                              "  " +
                                               timeText(
                                                 snapshot.data![index]['endDate']
                                                     .toString()
@@ -525,14 +534,6 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
       // If that call was not successful, throw an error.
       throw Exception('404 Error');
     }
-  }
-
-  String timeText(String string) {
-    String timeString = "14:30:00";
-    DateTime time = DateTime.parse("1970-01-01 $string");
-
-    String formattedTime = DateFormat('h:mm a').format(time);
-    return formattedTime;
   }
 }
 
