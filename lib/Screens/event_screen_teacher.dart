@@ -79,7 +79,7 @@ class _TeacherScreenState extends State<TeacherScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => OdStudent(),
+                    builder: (context) => ODListScreen(),
                   ),
                 );
               }, Icons.add)
@@ -335,14 +335,6 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
                               isLoading = false;
                               _data = fetchData(user);
                             });
-                            // var x = await reports;
-                            // for (Map<String, dynamic> m in x) {
-                            //   m.forEach((key, value) {
-                            //     print('$key $value');
-                            //   });
-                            // }
-                            // print(
-                            //     jsonDecode(value.body).runtimeType);
                             showModalBottomSheet(
                               context: context,
                               builder: (context) => SingleChildScrollView(
@@ -361,117 +353,115 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
                               ),
                             );
                           },
-                          child: Expanded(
-                            child: Container(
-                              padding: EdgeInsets.all(16),
-                              margin: EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: kPrimaryLightColor,
-                                border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: 
-                              Column(
-                                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                // crossAxisAlignment: CrossAxisAlignment.,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                            (snapshot.data![index]['title']
-                                                    .toString()) +
-                                                " ",
-                                            style: TextStyle(
-                                                color: Colors.orange.shade300,
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold)),
-                                        Text(
-                                          snapshot.data![index]['eventId']
-                                              .toString(),
+                          child: Container(
+                            padding: EdgeInsets.all(16),
+                            margin: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: kPrimaryLightColor,
+                              border: Border.all(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: 
+                            Column(
+                              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              // crossAxisAlignment: CrossAxisAlignment.,
+                              mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                          (snapshot.data![index]['title']
+                                                  .toString()) +
+                                              " ",
                                           style: TextStyle(
-                                              color: Colors.white,
+                                              color: Colors.orange.shade300,
                                               fontSize: 20,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Container(
-                                      alignment: Alignment.topLeft,
-                                      child: Text(
-                                        snapshot.data![index]['description'],
+                                              fontWeight: FontWeight.bold)),
+                                      Text(
+                                        snapshot.data![index]['eventId']
+                                            .toString(),
                                         style: TextStyle(
-                                            color: Colors.blueAccent,
+                                            color: Colors.white,
                                             fontSize: 20,
                                             fontWeight: FontWeight.bold),
                                       ),
+                                    ],
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Container(
+                                    alignment: Alignment.topLeft,
+                                    child: Text(
+                                      snapshot.data![index]['description'],
+                                      style: TextStyle(
+                                          color: Colors.blueAccent,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                            snapshot.data![index]['fromDate']
-                                                    .toString()
-                                                    .substring(8, 10) +
-                                                snapshot.data![index]
-                                                        ['fromDate']
-                                                    .toString()
-                                                    .substring(4, 7) +
-                                                "-" +
-                                                snapshot.data![index]
-                                                        ['fromDate']
-                                                    .toString()
-                                                    .substring(2, 4) +
-                                                "  " +
-                                                timeText(snapshot.data![index]
-                                                        ['fromDate']
-                                                    .toString()
-                                                    .substring(11, 19)),
-                                            style: TextStyle(
-                                                color: Colors.green.shade300,
-                                                fontWeight: FontWeight.bold)),
-                                        Text("|",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold)),
-                                        Text(
-                                          snapshot.data![index]['endDate']
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                          snapshot.data![index]['fromDate']
                                                   .toString()
                                                   .substring(8, 10) +
-                                              snapshot.data![index]['endDate']
+                                              snapshot.data![index]
+                                                      ['fromDate']
                                                   .toString()
                                                   .substring(4, 7) +
                                               "-" +
-                                              snapshot.data![index]['endDate']
+                                              snapshot.data![index]
+                                                      ['fromDate']
                                                   .toString()
                                                   .substring(2, 4) +
                                               "  " +
-                                              timeText(
-                                                snapshot.data![index]['endDate']
-                                                    .toString()
-                                                    .substring(11, 19),
-                                              ),
+                                              timeText(snapshot.data![index]
+                                                      ['fromDate']
+                                                  .toString()
+                                                  .substring(11, 19)),
                                           style: TextStyle(
-                                              color: Colors.red.shade300,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
+                                              color: Colors.green.shade300,
+                                              fontWeight: FontWeight.bold)),
+                                      Text("|",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold, fontSize: 20)),
+                                      Text(
+                                        snapshot.data![index]['endDate']
+                                                .toString()
+                                                .substring(8, 10) +
+                                            snapshot.data![index]['endDate']
+                                                .toString()
+                                                .substring(4, 7) +
+                                            "-" +
+                                            snapshot.data![index]['endDate']
+                                                .toString()
+                                                .substring(2, 4) +
+                                            "  " +
+                                            timeText(
+                                              snapshot.data![index]['endDate']
+                                                  .toString()
+                                                  .substring(11, 19),
+                                            ),
+                                        style: TextStyle(
+                                            color: Colors.red.shade300,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
                             ),
                           ),
                         );

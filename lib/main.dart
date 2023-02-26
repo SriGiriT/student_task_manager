@@ -68,25 +68,6 @@ Future main() async {
       ?.createNotificationChannel(channel);
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
       alert: true, badge: true, sound: true);
-
-  // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-  //   RemoteNotification notification = message.notification!;
-  //   AndroidNotification? android = message.notification!.android;
-  //   if (notification != null && android != null) {
-  //     flutterLocalNotificationsPlugin.show(
-  //         notification.hashCode,
-  //         notification.title,
-  //         notification.body,
-  //         NotificationDetails(
-  //             android: AndroidNotificationDetails(
-  //           channel.id,
-  //           channel.name,
-  //           // channel.description,
-  //           color: Colors.blue,
-  //         )));
-  //   }
-  // });
-
   String? token = await FirebaseMessaging.instance.getToken();
   print(token);
   to = token!;
@@ -99,8 +80,6 @@ class MyApp extends StatefulWidget {
   @override
   State<MyApp> createState() => _MyAppState();
 }
-
-int count = 0;
 
 class _MyAppState extends State<MyApp> {
   String? _token;

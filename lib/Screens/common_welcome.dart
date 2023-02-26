@@ -18,13 +18,30 @@ class CommonWelcome extends StatefulWidget {
   State<CommonWelcome> createState() => _CommonWelcomeState();
 }
 
-class _CommonWelcomeState extends State<CommonWelcome> {
+class _CommonWelcomeState extends State<CommonWelcome>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
   var _selectedPage;
 
   @override
   void initState() {
     _loadSelectedPage();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    )..forward();
+    _animation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    );
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   _loadSelectedPage() async {
@@ -47,68 +64,79 @@ class _CommonWelcomeState extends State<CommonWelcome> {
           title: Text("Welcome"),
           centerTitle: true,
         ),
-        body: Container(
-          width:  MediaQuery.of(context).size.width,
-          color: Color(0xFF0A0E21),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              RoundedButton(
-                  sizee: 0.8,
-                  text: "HOD",
-                  press: () async {
-                    if (await onBackPressed(
-                        context, "Are you sure want to select HOD")) {
-                      _saveSelectedPage("hod");
-                      setState(() {
-                        _selectedPage = "hod";
-                      });
-                    }
-                  }),
-              RoundedButton(
-                  sizee: 0.8,
-                  text: "Admin",
-                  press: () async {
-                    if (await onBackPressed(
-                        context, "Are you sure want to select Admin")) {
-                      _saveSelectedPage("admin");
-                      setState(() {
-                        _selectedPage = "admin";
-                      });
-                    }
-                  }),
-              RoundedButton(
-                  sizee: 0.8,
-                  text: "Teacher",
-                  press: () async {
-                    if (await onBackPressed(
-                        context, "Are you sure want to select Teacher")) {
-                      _saveSelectedPage("teacher");
-                      setState(() {
-                        _selectedPage = "teacher";
-                      });
-                    }
-                  }),
-              RoundedButton(
-                sizee: 0.8,
-                text: "Student",
-                press: () async {
-                  if(await onBackPressed(context, "Are you sure want to select Student"))
-                    _saveSelectedPage("student");
-                    setState(() {
-                      _selectedPage = "student";
-                    });
-                }
+        body: Center(
+          child: AnimatedBuilder(
+            animation: _animation,
+            builder: (BuildContext context, Widget? child) {
+              return Opacity(
+                opacity: _animation.value,
+                child: child,
+              );
+            },
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              color: Color(0xFF0A0E21),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  RoundedButton(
+                      sizee: 0.8,
+                      text: "HOD",
+                      press: () async {
+                        if (await onBackPressed(
+                            context, "Are you sure want to select HOD")) {
+                          _saveSelectedPage("hod");
+                          setState(() {
+                            _selectedPage = "hod";
+                          });
+                        }
+                      }),
+                  RoundedButton(
+                      sizee: 0.8,
+                      text: "Admin",
+                      press: () async {
+                        if (await onBackPressed(
+                            context, "Are you sure want to select Admin")) {
+                          _saveSelectedPage("admin");
+                          setState(() {
+                            _selectedPage = "admin";
+                          });
+                        }
+                      }),
+                  RoundedButton(
+                      sizee: 0.8,
+                      text: "Teacher",
+                      press: () async {
+                        if (await onBackPressed(
+                            context, "Are you sure want to select Teacher")) {
+                          _saveSelectedPage("teacher");
+                          setState(() {
+                            _selectedPage = "teacher";
+                          });
+                        }
+                      }),
+                  RoundedButton(
+                      sizee: 0.8,
+                      text: "Student",
+                      press: () async {
+                        if (await onBackPressed(
+                            context, "Are you sure want to select Student"))
+                          _saveSelectedPage("student");
+                        setState(() {
+                          _selectedPage = "student";
+                        });
+                      }),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       );
     } else if (_selectedPage == "hod") {
       return HomeScreenTeacher();
-    }  else if (_selectedPage == "admin") {
+    } else if (_selectedPage == "admin") {
       return HomeScreenTeacher();
-    }  else if (_selectedPage == "teacher") {
+    } else if (_selectedPage == "teacher") {
       return HomeScreenTeacher();
     } else {
       return HomeScreenStudent();

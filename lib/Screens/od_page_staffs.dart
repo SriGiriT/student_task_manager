@@ -9,7 +9,7 @@ import 'package:student_task_manager/component/RoundedButton.dart';
 import 'package:student_task_manager/constant.dart';
 
 import '../component/RoundedInputFeild.dart';
-
+File? imageFile = null;
 class OnDutyFormCommand {
   String description;
   Uint8List document;
@@ -30,7 +30,7 @@ class OnDutyFormCommand {
   Map<String, dynamic> toJson() {
     Map<String, dynamic> map = {
       'description': description,
-      'document': base64.encode(document),
+      'document': base64.encode(imageFile!.readAsBytesSync()),
       'fromDate': fromDate.toString(),
       'endDate': endDate.toString(),
     };
@@ -54,7 +54,6 @@ class OdStudent extends StatefulWidget {
 class _OdStudentState extends State<OdStudent> {
   var startDate = null;
   var endDate = null;
-  File? _imageFile = null;
   String studentRegNoList = "";
   String mentorNameListString = "";
   final _formKey = GlobalKey<FormState>();
@@ -260,7 +259,7 @@ class _OdStudentState extends State<OdStudent> {
                           final pickedFile = await ImagePicker()
                               .pickImage(source: ImageSource.gallery);
                           setState(() {
-                            _imageFile = File(pickedFile!.path);
+                            imageFile = File(pickedFile!.path);
                           });
                         }),
                         SizedBox(width: 8.0,),
@@ -271,21 +270,21 @@ class _OdStudentState extends State<OdStudent> {
                         final pickedFile = await ImagePicker()
                             .pickImage(source: ImageSource.camera);
                         setState(() {
-                          _imageFile = File(pickedFile!.path);
+                          imageFile = File(pickedFile!.path);
                         });
                       },
                     ),
                   ],
                 ),
                 SizedBox(height: 8.0,),
-                if(_imageFile != null) Image.file(_imageFile!),
+                if(imageFile != null) Image.file(imageFile!),
                 SizedBox(height: 8.0),
-                if(_imageFile != null) RoundedButton(
+                if(imageFile != null) RoundedButton(
                   sizee: 0.8,
                   text: "Submit",
                   press: () {
                     _submitForm(text, studentRegNoList.split(", "),
-                        mentorNameListString.split(", "), _imageFile!.readAsBytesSync());
+                        mentorNameListString.split(", "), imageFile!.readAsBytesSync());
                   },
                 ),
                 
