@@ -7,6 +7,8 @@ import 'dart:convert';
 import 'package:student_task_manager/constant.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../component/RoundedInputFeild.dart';
+
 bool isLoading = false;
 List<String> abse = [];
 List<String> ods = [];
@@ -34,13 +36,14 @@ class ApiService {
     print(DateTime.now().toString().substring(0, 10));
     var data = json.decode(response.body);
     List<Student> students = [];
+    print(data);
     data.forEach((key, value) {
       value.forEach((key1, value1) {
         students.add(Student(
             id: key,
             name: key1,
             present: value1['isPresent'],
-            od: value1['onOd']));
+            od: value1['onOd'] == null ? false : true));
       });
     });
     abse = await students
@@ -227,6 +230,8 @@ class Student {
 class AbsenteesPage extends StatefulWidget {
   final List<String> absentees;
   final List<String> odList;
+  var startDate = null;
+  var endDate = null;
 
   AbsenteesPage({required this.absentees, required this.odList});
 
@@ -238,6 +243,22 @@ class _AbsenteesPageState extends State<AbsenteesPage> {
   void initState() {
     super.initState();
     _fetchStudents();
+  }
+
+  Future<List<Map<String, dynamic>>> fetchStudentsByDate(
+      DateTime startDate, DateTime endDate) async {
+    final response = await http.post(Uri.parse(
+        '$kURL/teacher/getAttendancePercentage/III CSE C/${DateTime.now().subtract(Duration(days: 5)).millisecondsSinceEpoch}/${DateTime.now().millisecondsSinceEpoch}'));
+    var data = json.decode(response.body);
+    List<Map<String, dynamic>> students = [];
+    print(data.runtimeType);
+    data.forEach((key, value) {
+      Map<String, dynamic> te = {};
+      te['sName'] = key;
+      te['value'] = value;
+      students.add(te);
+    });
+    return students;
   }
 
   Future<void> _fetchStudents() async {
@@ -268,7 +289,7 @@ class _AbsenteesPageState extends State<AbsenteesPage> {
     ids += widget.odList.join(", ");
     final String url = "whatsapp://send?text=${ids}";
     if (await canLaunch(url)) {
-    await launch(url);
+      await launch(url);
     } else {
       throw "Could not launch $url";
     }
@@ -296,89 +317,217 @@ class _AbsenteesPageState extends State<AbsenteesPage> {
         child: Center(
           child: Padding(
             padding: EdgeInsets.all(16.0),
-            child: Stack(
-              alignment: Alignment.center,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                ElevatedButton(onPressed: (){
-                  
-                }, child: const Text("Get Date wise Attendance")),
-                Container(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Absentees' IDs",
-                        style: TextStyle(fontSize: 24.0, color: Colors.white),
-                      ),
-                      SizedBox(height: 16.0),
-                      GestureDetector(
-                        onTap: () {
-                          copyToClipboard(context);
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 16.0, horizontal: 24.0),
-                          decoration: BoxDecoration(
-                            color: Colors.red.shade300,
-                            borderRadius: BorderRadius.circular(8.0),
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Absentees' IDs",
+                            style:
+                                TextStyle(fontSize: 24.0, color: Colors.white),
                           ),
-                          child: Text(
-                            widget.absentees.join(", "),
-                            style: TextStyle(fontSize: 18.0),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 16.0),
-                      Text(
-                        "OD IDs",
-                        style: TextStyle(fontSize: 24.0, color: Colors.white),
-                      ),
-                      SizedBox(height: 16.0),
-                      GestureDetector(
-                        onTap: () {
-                          copyToClipboard(context);
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 16.0, horizontal: 24.0),
-                          decoration: BoxDecoration(
-                            color: Colors.red.shade300,
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: Text(
-                            widget.odList.join(", "),
-                            style: TextStyle(fontSize: 18.0),
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          shareOnWhatsApp();
-                        },
-                        child: Container(
-                          margin: EdgeInsets.all(20),
-                          width: 150,
-                          height: 38,
-                          decoration: BoxDecoration(
-                              color: Colors.green.shade300,
-                              borderRadius: BorderRadius.circular(8)),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.whatsapp,
+                          SizedBox(height: 16.0),
+                          GestureDetector(
+                            onTap: () {
+                              copyToClipboard(context);
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 16.0, horizontal: 24.0),
+                              decoration: BoxDecoration(
+                                color: Colors.red.shade300,
+                                borderRadius: BorderRadius.circular(8.0),
                               ),
-                              Container(
-                                child: Text(" Whatsapp"),
-                              )
-                            ],
+                              child: Text(
+                                widget.absentees.join(", "),
+                                style: TextStyle(fontSize: 18.0),
+                              ),
+                            ),
                           ),
-                        ),
+                          SizedBox(height: 16.0),
+                          Text(
+                            "OD IDs",
+                            style:
+                                TextStyle(fontSize: 24.0, color: Colors.white),
+                          ),
+                          SizedBox(height: 16.0),
+                          GestureDetector(
+                            onTap: () {
+                              copyToClipboard(context);
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 16.0, horizontal: 24.0),
+                              decoration: BoxDecoration(
+                                color: Colors.red.shade300,
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              child: Text(
+                                widget.odList.join(", "),
+                                style: TextStyle(fontSize: 18.0),
+                              ),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              shareOnWhatsApp();
+                            },
+                            child: Container(
+                              margin: EdgeInsets.all(20),
+                              width: 150,
+                              height: 38,
+                              decoration: BoxDecoration(
+                                  color: Colors.green.shade300,
+                                  borderRadius: BorderRadius.circular(8)),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.whatsapp,
+                                  ),
+                                  Container(
+                                    child: Text(" Whatsapp"),
+                                  )
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    if (isLoading)
+                      CircularProgressIndicator(
+                        color: Colors.red,
                       )
-                    ],
-                  ),
+                  ],
                 ),
-                if(isLoading)CircularProgressIndicator(color: Colors.red,)
+                Column(
+                  children: [
+                    SizedBox(
+                      height: 8,
+                    ),
+                Text(
+                            "Attendance Report",
+                            style:
+                                TextStyle(fontSize: 24.0, color: Colors.white),
+                          ),
+                SizedBox(
+                  height: 8,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    RoundedInputField(
+                      isList: false,
+                      isDT: true,
+                      isDes: false,
+                      times: 0.45,
+                      hintText: widget.startDate == null
+                          ? "Select Date and Time"
+                          : widget.startDate.toString().substring(0, 19),
+                      icon: Icons.date_range,
+                      onChanged: (value) async {
+                        // value =
+                        // await widget.startDate.toString().substring(0, 10);
+                      },
+                      onTap: () async {
+                        final DateTime? selectedDateTime = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now().subtract(Duration(days: 30)),
+                          firstDate: DateTime(2015),
+                          lastDate: DateTime(2100),
+                        );
+                        if (selectedDateTime != null) {
+                          final TimeOfDay? selectedTime = await showTimePicker(
+                            context: context,
+                            initialTime: TimeOfDay.now(),
+                          );
+                          if (selectedTime != null) {
+                            setState(() {
+                              print(selectedDateTime.toString());
+                              widget.startDate = DateTime(
+                                  selectedDateTime.year,
+                                  selectedDateTime.month,
+                                  selectedDateTime.day,
+                                  selectedTime.hour,
+                                  selectedTime.minute);
+                            });
+                          }
+                        }
+                      },
+                    ),
+                    RoundedInputField(
+                      isList: false,
+                      isDT: true,
+                      isDes: false,
+                      times: 0.45,
+                      hintText: widget.endDate == null
+                          ? "End Date and Time"
+                          : widget.endDate.toString().substring(0, 19),
+                      icon: Icons.date_range_outlined,
+                      onChanged: (value) async {},
+                      onTap: () async {
+                        final DateTime? selectedDateTime = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2015),
+                          lastDate: DateTime(2100),
+                        );
+                        if (selectedDateTime != null) {
+                          final TimeOfDay? selectedTime = await showTimePicker(
+                            context: context,
+                            initialTime: TimeOfDay.now(),
+                          );
+                          if (selectedTime != null) {
+                            setState(() {
+                              widget.endDate = DateTime(
+                                  selectedDateTime.year,
+                                  selectedDateTime.month,
+                                  selectedDateTime.day,
+                                  selectedTime.hour,
+                                  selectedTime.minute);
+                            });
+                          }
+                        }
+                      },
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: kPrimaryLightColor),
+                  onPressed: () async {
+                    var data = await fetchStudentsByDate(
+                        widget.startDate, widget.endDate);
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (context) => SingleChildScrollView(
+                        child: Container(
+                          width: 500,
+                          height: 500,
+                          child: FilterAttendance(
+                            students: data,
+                          ),
+                          padding: EdgeInsets.only(
+                              bottom: MediaQuery.of(context).viewInsets.bottom),
+                        ),
+                      ),
+                    );
+                  },
+                  child: const Text("Get Date wise Attendance"),
+                ),
+
+                  ],
+                ),
               ],
             ),
           ),
@@ -388,4 +537,43 @@ class _AbsenteesPageState extends State<AbsenteesPage> {
   }
 }
 
+class FilterAttendance extends StatelessWidget {
+  List<Map<String, dynamic>> students;
+  FilterAttendance({super.key, required this.students});
 
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Color(0xFF0A0E21),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          ListView.builder(
+            itemCount: students.length,
+            itemBuilder: (context, index) {
+              final student = students[index];
+              return Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: ListTile(
+                  tileColor: Colors.blueGrey,
+                  title: Text(
+                    "${students[index]['sName']}",
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                  trailing: Text(
+                    "${students[index]['value']}",
+                    style: TextStyle(color: students[index]['value'] <= 74 ? Colors.red : Colors.green, fontSize: 18),
+                  ),
+                ),
+              );
+            },
+          ),
+          // if (isLoading)
+          //   CircularProgressIndicator(
+          //     color: Colors.red,
+          //   )
+        ],
+      ),
+    );
+  }
+}
