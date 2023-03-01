@@ -9,7 +9,9 @@ import 'package:student_task_manager/component/RoundedButton.dart';
 import 'package:student_task_manager/constant.dart';
 
 import '../component/RoundedInputFeild.dart';
+
 File? imageFile = null;
+
 class OnDutyFormCommand {
   String description;
   Uint8List document;
@@ -65,10 +67,7 @@ class _OdStudentState extends State<OdStudent> {
   }
 
   Future<void> _pickDocument() async {
-    // final pickedFile =
-    //     await ImagePicker().pickImage(source: ImageSource.gallery);
     final result = await FilePicker.platform.pickFiles();
-    // final document = await xFileToUint8List(pickedFile!);
     if (result != null) {
       final file = result.files.single;
       final document = await platformFileToUint8List(file);
@@ -79,8 +78,8 @@ class _OdStudentState extends State<OdStudent> {
   }
 
   late String text;
-  Future<void> _submitForm(
-      String text, List<String> studentList, List<String> mentorList, Uint8List imageFile) async {
+  Future<void> _submitForm(String text, List<String> studentList,
+      List<String> mentorList, Uint8List imageFile) async {
     if (_formKey.currentState!.validate()) {
       print(
           '${startDate.toString().substring(0, 10)} IST ${startDate.toString().substring(11, 19)}');
@@ -97,7 +96,6 @@ class _OdStudentState extends State<OdStudent> {
 
       final response = await http.post(
         Uri.parse(apiUrl),
-        // headers: {'Content-Type': 'application/json'},
         body: formCommand.toJson(),
       );
 
@@ -157,8 +155,6 @@ class _OdStudentState extends State<OdStudent> {
                           : startDate.toString().substring(0, 19),
                       icon: Icons.date_range,
                       onChanged: (value) async {
-                        // value =
-                        // await widget.startDate.toString().substring(0, 10);
                       },
                       onTap: () async {
                         final DateTime? selectedDateTime = await showDatePicker(
@@ -262,7 +258,9 @@ class _OdStudentState extends State<OdStudent> {
                             imageFile = File(pickedFile!.path);
                           });
                         }),
-                        SizedBox(width: 8.0,),
+                    SizedBox(
+                      width: 8.0,
+                    ),
                     RoundedButton(
                       sizee: 0.44,
                       text: "Take Photo",
@@ -276,18 +274,24 @@ class _OdStudentState extends State<OdStudent> {
                     ),
                   ],
                 ),
-                SizedBox(height: 8.0,),
-                if(imageFile != null) Image.file(imageFile!),
-                SizedBox(height: 8.0),
-                if(imageFile != null) RoundedButton(
-                  sizee: 0.8,
-                  text: "Submit",
-                  press: () {
-                    _submitForm(text, studentRegNoList.split(", "),
-                        mentorNameListString.split(", "), imageFile!.readAsBytesSync());
-                  },
+                SizedBox(
+                  height: 8.0,
                 ),
-                
+                if (imageFile != null) Image.file(imageFile!),
+                SizedBox(height: 8.0),
+                if (imageFile != null)
+                  RoundedButton(
+                    sizee: 0.8,
+                    text: "Submit",
+                    press: () {
+                      _submitForm(
+                        text,
+                        studentRegNoList.split(", "),
+                        mentorNameListString.split(", "),
+                        imageFile!.readAsBytesSync(),
+                      );
+                    },
+                  ),
               ],
             ),
           ),

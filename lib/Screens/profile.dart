@@ -20,9 +20,6 @@ class Profile extends StatelessWidget {
     final provider = Provider.of<GoogleSignInProvider>(context, listen: false);
     String accessToken = provider.accessToken;
     String idToken = provider.idToken;
-    // GoogleSignInAuthentication auth = GoogleSignInProvider().auth;
-    // print(auth.accessToken);
-    // print(auth.idToken);
     return Scaffold(
       appBar: AppBar(
         title: Text('Profile'),

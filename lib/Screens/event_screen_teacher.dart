@@ -57,7 +57,6 @@ class _TeacherScreenState extends State<TeacherScreen> {
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2),
             padding: const EdgeInsets.all(8),
-            // crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Listofgames(1, "Events", () {
                 Navigator.push(
@@ -128,7 +127,6 @@ class _TakeOrReferState extends State<TakeOrRefer> {
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2),
             padding: const EdgeInsets.all(8),
-            // crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Listofgames(1, "Take Attendance", () {
                 Navigator.push(
@@ -165,21 +163,6 @@ class EventScreenTeacher extends StatefulWidget {
 }
 
 class _EventScreenTeacherState extends State<EventScreenTeacher> {
-  // void showNotification() {
-  //   flutterLocalNotificationsPlugin.show(
-  //       0,
-  //       "Testing",
-  //       "test ",
-  //       NotificationDetails(
-  //           android: AndroidNotificationDetails(
-  //         channel.id,
-  //         channel.name,
-  //         channel.description,
-  //         importance: Importance.high,
-  //         color: Colors.blue,
-  //         playSound: true,
-  //       )));
-  // }
 
   late Future<List<dynamic>> _data;
   List<Map<String, dynamic>> reports = [];
@@ -189,11 +172,8 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
     final response = await http.post(Uri.parse(path));
     if (response.statusCode == 200) {
       setState(() {
-        // print(jsonDecode(response.body));
-        // print(jsonDecode(response.body).runtimeType);
         reports = [];
         for (var item in jsonDecode(response.body)) {
-          // print(item.runtimeType);
           if (item is Map) {
             Map<String, dynamic> newMap = {};
             item.forEach((key, value) {
@@ -202,11 +182,6 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
             reports.add(newMap);
           }
         }
-        // reports = jsonDecode(response.body)
-        //     .map((student) => json.decode(student))
-        //     .toList();
-        // print(reports.runtimeType);
-        // print(reports.toString());
       });
     } else {
       print("error");
@@ -219,9 +194,6 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
       setState(() {
         print(jsonDecode(response.body));
         reports_stats = {};
-        // jsonDecode(response.body).forEach((key, value)){
-        //   reports_stats[key] = value;
-        // }
         reports_stats = jsonDecode(response.body).cast<String, int>();
       });
     } else {
@@ -231,43 +203,6 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
 
   @override
   void initState() {
-    // super.initState();
-    // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    //   RemoteNotification notification = message.notification!;
-    //   AndroidNotification? android = message.notification!.android;
-    //   if (notification != null && android != null) {
-    //     flutterLocalNotificationsPlugin.show(
-    //         notification.hashCode,
-    //         notification.title,
-    //         notification.body,
-    //         NotificationDetails(
-    //             android: AndroidNotificationDetails(
-    //           channel.id,
-    //           channel.name,
-    //           channel.description,
-    //           color: Colors.blue,
-    //         )));
-    //   }
-    // });
-    // FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    //   print('A new onMessageOpenedApp event was published!');
-    //   RemoteNotification notification = message.notification!;
-    //   AndroidNotification android = message.notification!.android!;
-    //   if (notification != null && android != null) {
-    //     showDialog(
-    //         context: context,
-    //         builder: (_) {
-    //           return AlertDialog(
-    //             title: Text(notification.title!),
-    //             content: SingleChildScrollView(
-    //                 child: Column(
-    //               crossAxisAlignment: CrossAxisAlignment.start,
-    //               children: [Text(notification.body!)],
-    //             )),
-    //           );
-    //         });
-    //   }
-    // });
     super.initState();
     _data = fetchData(user);
   }

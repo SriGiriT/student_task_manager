@@ -53,7 +53,6 @@ class _StudentScreenState extends State<StudentScreen> {
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2),
             padding: const EdgeInsets.all(8),
-            // crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Listofgames(1, "Events", () {
                 Navigator.push(
@@ -155,8 +154,6 @@ class _EventScreenState extends State<EventScreen> {
                               borderRadius: BorderRadius.circular(5),
                             ),
                             child: Column(
-                              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              // crossAxisAlignment: CrossAxisAlignment.,
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Padding(
@@ -282,18 +279,13 @@ class _EventScreenState extends State<EventScreen> {
   Future<List<dynamic>> fetchData(User? user) async {
     final response = await http.post(Uri.parse(
         '$kURL/student/get/${user!.email!.substring(0, user.email!.indexOf("@"))}'));
-    print('${user.email!.substring(0, user.email!.indexOf("@"))}');
     setState(() {
       isLoading = false;
     });
-    // print(user!.displayName);
-    // print(response.body);
     if (response.statusCode == 200) {
-      // If the call to the server was successful, parse the JSON
       List jsonResponse = json.decode(response.body);
       return jsonResponse;
     } else {
-      // If that call was not successful, throw an error.
       throw Exception('Failed to load post');
     }
   }

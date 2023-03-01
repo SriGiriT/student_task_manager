@@ -71,7 +71,7 @@ class _ODListScreenState extends State<ODListScreen> {
                 _data;
                 for (var i in await _data) {
                   i.forEach((key, value) {
-                    print("$key ${value}");
+                    print("$key ${value} ${value.runtimeType}");
                   });
                 }
               },
@@ -101,7 +101,7 @@ class _ODListScreenState extends State<ODListScreen> {
                               }
                             }
                             _data = fetchData(user);
-                            setState(()  {
+                            setState(() {
                               isLoading = false;
                             });
                           },
@@ -113,6 +113,13 @@ class _ODListScreenState extends State<ODListScreen> {
                             setState(() {
                               isLoading = false;
                             });
+                            String studentSet = "";
+                            for (Map<String, dynamic> x in snapshot.data![index]
+                                ['studentSet']) {
+                              x.forEach((key, value) {
+                                if (key == "rollNo") studentSet += value + ", ";
+                              });
+                            }
                             showModalBottomSheet(
                               context: context,
                               builder: (context) => SingleChildScrollView(
@@ -130,6 +137,7 @@ class _ODListScreenState extends State<ODListScreen> {
                                         ['document'],
                                     description: snapshot.data![index]
                                         ['description'],
+                                    studentList: studentSet,
                                     fromDate: snapshot.data![index]['fromDate'],
                                     endDate: snapshot.data![index]['endDate'],
                                   ),
@@ -161,10 +169,12 @@ class _ODListScreenState extends State<ODListScreen> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                          (snapshot.data![index]['studentSet']
+                                          
+                                            "${snapshot.data![index]['studentSet']
+                                                      [0]['name']
+                                                  .toString()}-${snapshot.data![index]['studentSet']
                                                       [0]['rollNo']
-                                                  .toString()) +
-                                              " ",
+                                                  .toString()} ",
                                           style: TextStyle(
                                               color: Colors.orange.shade300,
                                               fontSize: 20,
@@ -280,13 +290,10 @@ class _ODListScreenState extends State<ODListScreen> {
   Future<List<dynamic>> fetchData(User? user) async {
     final response =
         await http.post(Uri.parse('$kURL/teacher/getOdList/III CSE C'));
-    // print(response.body);
     if (response.statusCode == 200) {
-      // If the call to the server was successful, parse the JSON
       List jsonResponse = json.decode(response.body);
       return jsonResponse;
     } else {
-      // If that call was not successful, throw an error.
       throw Exception('404 Error');
     }
   }
@@ -299,13 +306,15 @@ class OdDetails extends StatefulWidget {
   String description;
   String fromDate;
   String endDate;
+  String studentList;
   OdDetails(
       {required this.studentId,
       required this.studentName,
       required this.documentImg,
       required this.description,
       required this.fromDate,
-      required this.endDate});
+      required this.endDate,
+      required this.studentList});
 
   @override
   _OdDetailsState createState() => _OdDetailsState();
@@ -315,8 +324,6 @@ class _OdDetailsState extends State<OdDetails> {
   TextEditingController textEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    // textEditingController.text = widget.documentImg!;
-    // print(widget.documentImg!.length);
     return Container(
       color: Color(0xFF0A0E21),
       child: SingleChildScrollView(
@@ -340,7 +347,6 @@ class _OdDetailsState extends State<OdDetails> {
                       ),
                       Text(
                         widget.studentId,
-                        // "${(widget.stats['completed'])}/${widget.stats['total']}",
                         style: TextStyle(
                             color: Colors.green.shade300,
                             fontWeight: FontWeight.bold,
@@ -353,6 +359,16 @@ class _OdDetailsState extends State<OdDetails> {
                   ),
                   Text(
                     widget.description,
+                    style: TextStyle(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18),
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Text(
+                    widget.studentList.substring(0, widget.studentList.length-2),
                     style: TextStyle(
                         color: Colors.blue,
                         fontWeight: FontWeight.bold,

@@ -9,8 +9,6 @@ import 'package:student_task_manager/Screens/profile.dart';
 import 'package:student_task_manager/component/google_sign_in.dart';
 import 'package:student_task_manager/Screens/profile.dart';
 
-//import 'package:flutter_svg/svg.dart';
-
 class HomeScreenStudent extends StatefulWidget {
   @override
   State<HomeScreenStudent> createState() => _HomeScreenStudentState();

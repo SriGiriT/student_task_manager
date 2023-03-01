@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:student_task_manager/Screens/home_screen_teacher.dart';
 import 'package:student_task_manager/component/RoundedButton.dart';
 import 'package:student_task_manager/component/RoundedInputFeild.dart';
 import 'package:student_task_manager/component/TextFieldContainer.dart';
@@ -31,7 +30,7 @@ Future<DateTime> selectDateTime(BuildContext context) async {
           pickedTime.minute);
     }
   }
-  return new DateTime.now();
+  return DateTime.now();
 }
 
 class AddEvent extends StatefulWidget {
@@ -186,7 +185,7 @@ class _AddEventState extends State<AddEvent> {
                         : widget.endDate.toString().substring(0, 19),
                     icon: Icons.date_range_outlined,
                     onChanged: (value) async {
-                      // value = await widget.endDate.toString().substring(0, 10);
+                      
                     },
                     onTap: () async {
                       final DateTime? selectedDateTime = await showDatePicker(

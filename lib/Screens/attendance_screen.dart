@@ -35,24 +35,12 @@ class ApiService {
     var data = json.decode(response.body);
     List<Student> students = [];
     data.forEach((key, value) {
-      // print(key);
-      // print(value);
       value.forEach((key1, value1) {
-        // print(key + " " + key1 + " " + value1);
-        // value1['isPresent'] +
-        List<bool> li = [];
         students.add(Student(
             id: key,
             name: key1,
             present: value1['isPresent'],
             od: value1['onOd']));
-        // students
-        //     .add(Student(id: key, name: key1, present: value2, od: value2));
-        //   students.add(Student(
-        //       id: key,
-        //       name: key1,
-        //       present: value1['isPresent'],
-        //       od: value1['isOd']));
       });
     });
     abse = await students
@@ -65,19 +53,9 @@ class ApiService {
         .toList()
         .map((e) => e.id.substring(6))
         .toList();
-    ab = await abse;
-    od = await ods;
+    ab = abse;
+    od = ods;
     return students;
-  }
-
-  static Future<void> updateAttendance(Student student) async {
-    final response = await http.post(
-        Uri.parse('$baseUrl/teacher/student/attendance/${student.id}'),
-        body: json.encode({'present': student.present}));
-    // student.present = !student.present;
-    if (response.statusCode != 200) {
-      throw Exception('Failed to update attendance.');
-    }
   }
 
   static Future<void> submitAttendance(List<Student> students) async {
@@ -87,14 +65,9 @@ class ApiService {
     print(data);
     Map<String, bool> res = {};
     for (var item in data) {
-      // print(item.runtimeType);
       if (item is Map) {
-        // Map<String, bool> newMap = {};
         item.forEach((key, value) {
           res.putIfAbsent(key, () => value);
-          // newMap[key] = value;
-          // });
-          // res.add(newMap);
         });
       }
     }
@@ -294,15 +267,11 @@ class _AbsenteesPageState extends State<AbsenteesPage> {
     ids += "\n\nOd:\n";
     ids += widget.odList.join(", ");
     final String url = "whatsapp://send?text=${ids}";
-
-    //"whatsapp://send?phone=+91{}&text=hi";
-
-    // "whatsapp://send?test=${Uri.parse(ids)}&phone=+91"; // replace with your WhatsApp group URL
-    // if (await canLaunch(url)) {
+    if (await canLaunch(url)) {
     await launch(url);
-    // } else {
-    //   throw "Could not launch $url";
-    // }
+    } else {
+      throw "Could not launch $url";
+    }
   }
 
   @override
@@ -330,6 +299,9 @@ class _AbsenteesPageState extends State<AbsenteesPage> {
             child: Stack(
               alignment: Alignment.center,
               children: [
+                ElevatedButton(onPressed: (){
+                  
+                }, child: const Text("Get Date wise Attendance")),
                 Container(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -417,76 +389,3 @@ class _AbsenteesPageState extends State<AbsenteesPage> {
 }
 
 
-
-
-// class AbsenteesPage extends StatelessWidget {
-//   final List<String> absentees;
-
-//   AbsenteesPage({required this.absentees});
-
-//   Future<void> _shareOnWhatsApp() async {
-//     final String ids = absentees.join(", ");
-//     final String url =
-//         "https://wa.me/?text=Absentees%27%20IDs:%20$ids"; // replace with your WhatsApp group URL
-//     if (await canLaunch(url)) {
-//       await launch(url);
-//     } else {
-//       throw "Could not launch $url";
-//     }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return WillPopScope(
-//       onWillPop: () async {
-//         Navigator.popUntil(context, ModalRoute.withName('/'));
-//                   Navigator.pushNamed(context, '/tescreen');
-//         return true;
-//       },
-//       child: Scaffold(
-//         backgroundColor: Color(0xFF0A0E21),
-//         appBar: AppBar(
-//           title: Text('Absentees'),
-//         ),
-//         body: Center(
-//           child: Column(
-//             mainAxisAlignment: MainAxisAlignment.center,
-//             children: [
-//               Container(
-//                 margin: EdgeInsets.all(20),
-//                 padding: EdgeInsets.all(10),
-//                 decoration: BoxDecoration(
-//                   color: Colors.red.shade300,
-//                   border: Border.all(
-//                     color: Colors.red,
-//                     width: 2.0,
-//                   ),
-//                   borderRadius: BorderRadius.circular(10),
-//                 ),
-//                 child: Text(
-//                   absentees.join(', '),
-//                   style: TextStyle(fontSize: 18),
-//                 ),
-//               ),
-//               SizedBox(height: 20),
-//               ElevatedButton(
-//                 style: ElevatedButton.styleFrom(
-//                     backgroundColor: kPrimaryLightColor),
-//                 onPressed: () {
-//                   Clipboard.setData(ClipboardData(text: absentees.join(', ')));
-//                   ScaffoldMessenger.of(context).showSnackBar(
-//                     SnackBar(
-//                       content: Text('Absentees copied to clipboard'),
-//                       duration: Duration(seconds: 1),
-//                     ),
-//                   );
-//                 },
-//                 child: Text('Copy to Clipboard'),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
