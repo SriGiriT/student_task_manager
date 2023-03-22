@@ -69,7 +69,7 @@ Future main() async {
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
       alert: true, badge: true, sound: true);
   String? token = await FirebaseMessaging.instance.getToken();
-  print(token);
+  // print(token);
   to = token!;
   runApp(const MyApp());
 }
@@ -169,6 +169,7 @@ class _MyAppState extends State<MyApp> {
             '/event': (context) => EventScreen(),
             '/eventte': (context) => EventScreenTeacher(),
             '/tescreen': (context) => HomeScreenTeacher(),
+            '/stscreen': (context) => HomeScreenStudent(),
             '/addEvent': (context) => AddEvent(),
             'text': (context) => MyApp(),
             '/attendance': (context) => AttendancePage()

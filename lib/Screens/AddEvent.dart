@@ -12,9 +12,9 @@ import 'package:http/http.dart' as http;
 
 import '../component/google_sign_in.dart';
 
-const List<String> yearList = ['I', 'II', 'III', 'IV', 'V'];
+const List<String> yearList = ['All','I', 'II', 'III', 'IV', 'V'];
 const List<String> deptList = ['CSE', 'IT', 'ECE', 'EEE', 'MTECH'];
-const List<String> classList = ['A', 'B', 'C'];
+const List<String> classList = ['All','A', 'B', 'C'];
 
 Future<DateTime> selectDateTime(BuildContext context) async {
   final DateTime? picked = await showDatePicker(
@@ -37,9 +37,9 @@ class AddEvent extends StatefulWidget {
   AddEvent({super.key});
   var startDate = null;
   var endDate = null;
-  String selectedYear = 'III';
-  String selectedDept = 'CSE';
-  String selectedClass = 'C';
+  String selectedYear = "All";
+  String selectedDept = "CSE";
+  String selectedClass = "All";
   String description = "";
   String title = "";
 
@@ -280,10 +280,10 @@ class _AddEventState extends State<AddEvent> {
                   // var encodedBody = body.keys.map((key) => "$key=${body[key]}").join("&");
                   // var encodedBody =
                   //     body.keys.map((e) => '$e=${body[e]}').join("&");
-                  http.post(Uri.parse('$kURL/teacher/event/new'), body: body);
-                  print(body);
-                  print(
-                      "$kURL/${widget.title}/${widget.description}/${st.substring(0, 10)} IST ${st.substring(11, 19)}/${ed.substring(0, 10)} IST ${ed.substring(11, 19)}/${widget.selectedYear} ${widget.selectedDept} ${widget.selectedClass}");
+                  http.post(Uri.parse('$kURL/events/new'), body: body);
+                  // print(body);
+                  // print(
+                  //     "$kURL/${widget.title}/${widget.description}/${st.substring(0, 10)} IST ${st.substring(11, 19)}/${ed.substring(0, 10)} IST ${ed.substring(11, 19)}/${widget.selectedYear} ${widget.selectedDept} ${widget.selectedClass}");
                   Navigator.popUntil(context, ModalRoute.withName('/'));
                   Navigator.pushNamed(context, '/eventte');
                 },

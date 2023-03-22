@@ -29,7 +29,8 @@ class GoogleSignInProvider extends ChangeNotifier {
       await FirebaseAuth.instance.signInWithCredential(credential);
       var body = {"token": to};
       http.post(Uri.parse('$kURL/login/${googleUser.email}/${to}'), body: body);
-      print('$kURL/login/${googleUser.email}/${to}');
+      // print('$kURL/login/${googleUser.email}/${to}');
+      
     } catch (e) {
       print(e.toString());
     }

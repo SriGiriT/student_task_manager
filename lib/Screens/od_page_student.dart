@@ -39,7 +39,7 @@ class _ODListScreenState extends State<ODListScreen> {
           backgroundColor: kMatColor,
           appBar: AppBar(
             leading: GestureDetector(
-              child: Icon(
+              child:const Icon(
                 Icons.refresh,
               ),
               onTap: () {
@@ -48,7 +48,7 @@ class _ODListScreenState extends State<ODListScreen> {
                 });
               },
             ),
-            title: Center(child: Text('OD list')),
+            title: const Center(child: Text('OD list')),
             actions: <Widget>[
               TextButton(
                   onPressed: () {
@@ -56,7 +56,7 @@ class _ODListScreenState extends State<ODListScreen> {
                         listen: false);
                     provider.logout();
                   },
-                  child: Text(
+                  child:const Text(
                     "Logout",
                     style: TextStyle(color: Colors.white),
                   ))
@@ -69,11 +69,6 @@ class _ODListScreenState extends State<ODListScreen> {
                   _data = fetchData(user);
                 });
                 _data;
-                for (var i in await _data) {
-                  i.forEach((key, value) {
-                    print("$key ${value} ${value.runtimeType}");
-                  });
-                }
               },
               child: FutureBuilder(
                 future: _data,
@@ -90,7 +85,7 @@ class _ODListScreenState extends State<ODListScreen> {
                             if (await onBackPressed(
                                 context, "Are you sure want to cancel OD")) {
                               final response = await http.post(Uri.parse(
-                                  '$kURL/teacher/cancelOd/${snapshot.data![index]['id']}'));
+                                  '$kURL/od/cancel/${snapshot.data![index]['id']}'));
                               // print(response.body);
                               if (response.statusCode == 200) {
                                 // If the call to the server was successful, parse the JSON
@@ -181,7 +176,7 @@ class _ODListScreenState extends State<ODListScreen> {
                                               fontWeight: FontWeight.bold)),
                                       Text(
                                         snapshot.data![index]['id'].toString(),
-                                        style: TextStyle(
+                                        style:const TextStyle(
                                             color: Colors.white,
                                             fontSize: 20,
                                             fontWeight: FontWeight.bold),
@@ -195,7 +190,7 @@ class _ODListScreenState extends State<ODListScreen> {
                                     alignment: Alignment.topLeft,
                                     child: Text(
                                       snapshot.data![index]['description'],
-                                      style: TextStyle(
+                                      style:const TextStyle(
                                           color: Colors.blueAccent,
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold),
@@ -227,7 +222,7 @@ class _ODListScreenState extends State<ODListScreen> {
                                           style: TextStyle(
                                               color: Colors.green.shade300,
                                               fontWeight: FontWeight.bold)),
-                                      Text("|",
+                                      const Text("|",
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold,
@@ -255,7 +250,7 @@ class _ODListScreenState extends State<ODListScreen> {
                                       ),
                                     ],
                                   ),
-                                )
+                                ) 
                               ],
                             ),
                           ),
@@ -289,7 +284,7 @@ class _ODListScreenState extends State<ODListScreen> {
 
   Future<List<dynamic>> fetchData(User? user) async {
     final response =
-        await http.post(Uri.parse('$kURL/teacher/getOdList/III CSE C'));
+        await http.post(Uri.parse('$kURL/od/list/${user!.email!.substring(0, user.email!.indexOf("@"))}'));
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       return jsonResponse;

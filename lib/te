@@ -48,7 +48,7 @@ Future main() async {
   // });
 
   String? token = await FirebaseMessaging.instance.getToken();
-  print(token);
+  // print(token);
   to = token!;
   runApp(const MyApp());
 }

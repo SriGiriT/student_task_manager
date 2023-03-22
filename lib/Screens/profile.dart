@@ -107,7 +107,7 @@ class Profile extends StatelessWidget {
                     'accessToken': accessToken.toString(),
                     'idToken': idToken.toString()
                   };
-                  print(accessToken + " | " + idToken);
+                  // print(accessToken + " | " + idToken);
                   http.post(Uri.parse('$kURL/'), body: body);
                 },
               ),

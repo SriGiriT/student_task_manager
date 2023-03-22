@@ -29,21 +29,22 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
 class ApiService {
   static String baseUrl = kURL;
+  static User? user = FirebaseAuth.instance.currentUser;
   static Future<List<Student>> fetchStudents() async {
     final response = await http.post(Uri.parse(
-        '$baseUrl/teacher/student/attendanceList/III CSE C/${DateTime.now().toString().substring(0, 10)}'));
+        '$baseUrl/attendance/list/${user!.email!.substring(0, user!.email!.indexOf("@"))}/${DateTime.now().toString().substring(0, 10)}'));
 
-    print(DateTime.now().toString().substring(0, 10));
+    // print(DateTime.now().toString().substring(0, 10));
     var data = json.decode(response.body);
     List<Student> students = [];
-    print(data);
+    // print(data);
     data.forEach((key, value) {
       value.forEach((key1, value1) {
         students.add(Student(
             id: key,
             name: key1,
             present: value1['isPresent'],
-            od: value1['onOd'] == null ? false : true));
+            od: value1['onOd']));
       });
     });
     abse = await students
@@ -65,7 +66,7 @@ class ApiService {
     final data = List<dynamic>.from(students.map((student) => {
           student.id: student.present,
         }));
-    print(data);
+    // print(data);
     Map<String, bool> res = {};
     for (var item in data) {
       if (item is Map) {
@@ -74,12 +75,12 @@ class ApiService {
         });
       }
     }
-    print(res);
+    // print(res);
     DateTime date = DateTime.now();
-    print(date.toString().substring(0, 10));
+    // print(date.toString().substring(0, 10));
     final response = await http.post(
         Uri.parse(
-            '$baseUrl/teacher/student/attendance/III CSE C/${date.toString().substring(0, 10)}'),
+            '$baseUrl/attendance/put/${user!.email!.substring(0, user!.email!.indexOf("@"))}/${date.toString().substring(0, 10)}'),
         headers: {"Content-Type": "application/json"},
         body: json.encode(res));
     if (response.statusCode != 200) {
@@ -95,11 +96,20 @@ class AttendancePage extends StatefulWidget {
 
 class _AttendancePageState extends State<AttendancePage> {
   List<Student> _students = [];
-
+  int period = 0;
   @override
   void initState() {
     super.initState();
     _fetchStudents();
+  }
+
+  Future<int> fetchDateAndPeriod() async {
+    final response = await http.post(Uri.parse('$kURL/teacher/getPeriod'));
+    var data = json.decode(response.body);
+    // print(data);
+    // print(data.runtimeType);
+    period = await data;
+    return period;
   }
 
   Future<void> _fetchStudents() async {
@@ -140,36 +150,66 @@ class _AttendancePageState extends State<AttendancePage> {
       body: Stack(
         alignment: Alignment.center,
         children: [
-          ListView.builder(
-            itemCount: _students.length,
-            itemBuilder: (context, index) {
-              final student = _students[index];
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    student.present = !student.present;
-                  });
-                },
-                child: ListTile(
-                  tileColor: student.present
-                      ? Colors.green.shade300
-                      : student.od
-                          ? Colors.orange.shade300
-                          : Colors.red.shade300,
-                  title: Text(
-                    "${student.id} - ${student.name}",
-                    style: TextStyle(color: Colors.white, fontSize: 18),
-                  ),
-                  trailing: Checkbox(
-                    value: student.present,
-                    onChanged: (value) {
-                      student.present = value!;
-                      _updateAttendance(index, value);
-                    },
-                  ),
+          Column(
+            children: [
+              Container(
+                padding: EdgeInsets.all(20),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        DateTime.now().toString().substring(8, 10) +
+                            DateTime.now().toString().substring(4, 7) +
+                            "-" +
+                            DateTime.now().toString().substring(2, 4),
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18),
+                      ),
+                      Text(
+                        'Period - ${period.toString()}',
+                        style: TextStyle(
+                            color: Colors.green.shade300,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18),
+                      ),
+                    ]),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: _students.length,
+                  itemBuilder: (context, index) {
+                    final student = _students[index];
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          student.present = !student.present;
+                        });
+                      },
+                      child: ListTile(
+                        tileColor: student.present
+                            ? Colors.green.shade300
+                            : student.od
+                                ? Colors.orange.shade300
+                                : Colors.red.shade300,
+                        title: Text(
+                          "${student.id} - ${student.name}",
+                          style: TextStyle(color: Colors.white, fontSize: 18),
+                        ),
+                        trailing: Checkbox(
+                          value: student.present,
+                          onChanged: (value) {
+                            student.present = value!;
+                            _updateAttendance(index, value);
+                          },
+                        ),
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
+              ),
+            ],
           ),
           if (isLoading)
             CircularProgressIndicator(
@@ -230,8 +270,6 @@ class Student {
 class AbsenteesPage extends StatefulWidget {
   final List<String> absentees;
   final List<String> odList;
-  var startDate = null;
-  var endDate = null;
 
   AbsenteesPage({required this.absentees, required this.odList});
 
@@ -240,25 +278,10 @@ class AbsenteesPage extends StatefulWidget {
 }
 
 class _AbsenteesPageState extends State<AbsenteesPage> {
+  final user = FirebaseAuth.instance.currentUser;
   void initState() {
     super.initState();
     _fetchStudents();
-  }
-
-  Future<List<Map<String, dynamic>>> fetchStudentsByDate(
-      DateTime startDate, DateTime endDate) async {
-    final response = await http.post(Uri.parse(
-        '$kURL/teacher/getAttendancePercentage/III CSE C/${DateTime.now().subtract(Duration(days: 5)).millisecondsSinceEpoch}/${DateTime.now().millisecondsSinceEpoch}'));
-    var data = json.decode(response.body);
-    List<Map<String, dynamic>> students = [];
-    print(data.runtimeType);
-    data.forEach((key, value) {
-      Map<String, dynamic> te = {};
-      te['sName'] = key;
-      te['value'] = value;
-      students.add(te);
-    });
-    return students;
   }
 
   Future<void> _fetchStudents() async {
@@ -288,11 +311,11 @@ class _AbsenteesPageState extends State<AbsenteesPage> {
     ids += "\n\nOd:\n";
     ids += widget.odList.join(", ");
     final String url = "whatsapp://send?text=${ids}";
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw "Could not launch $url";
-    }
+    // if (await canLaunch(url)) {
+    await launch(url);
+    // } else {
+    //   throw "Could not launch $url";
+    // }
   }
 
   @override
@@ -407,131 +430,240 @@ class _AbsenteesPageState extends State<AbsenteesPage> {
                       )
                   ],
                 ),
-                Column(
-                  children: [
-                    SizedBox(
-                      height: 8,
-                    ),
-                Text(
-                            "Attendance Report",
-                            style:
-                                TextStyle(fontSize: 24.0, color: Colors.white),
-                          ),
-                SizedBox(
-                  height: 8,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    RoundedInputField(
-                      isList: false,
-                      isDT: true,
-                      isDes: false,
-                      times: 0.45,
-                      hintText: widget.startDate == null
-                          ? "Select Date and Time"
-                          : widget.startDate.toString().substring(0, 19),
-                      icon: Icons.date_range,
-                      onChanged: (value) async {
-                        // value =
-                        // await widget.startDate.toString().substring(0, 10);
-                      },
-                      onTap: () async {
-                        final DateTime? selectedDateTime = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now().subtract(Duration(days: 30)),
-                          firstDate: DateTime(2015),
-                          lastDate: DateTime(2100),
-                        );
-                        if (selectedDateTime != null) {
-                          final TimeOfDay? selectedTime = await showTimePicker(
-                            context: context,
-                            initialTime: TimeOfDay.now(),
-                          );
-                          if (selectedTime != null) {
-                            setState(() {
-                              print(selectedDateTime.toString());
-                              widget.startDate = DateTime(
-                                  selectedDateTime.year,
-                                  selectedDateTime.month,
-                                  selectedDateTime.day,
-                                  selectedTime.hour,
-                                  selectedTime.minute);
-                            });
-                          }
-                        }
-                      },
-                    ),
-                    RoundedInputField(
-                      isList: false,
-                      isDT: true,
-                      isDes: false,
-                      times: 0.45,
-                      hintText: widget.endDate == null
-                          ? "End Date and Time"
-                          : widget.endDate.toString().substring(0, 19),
-                      icon: Icons.date_range_outlined,
-                      onChanged: (value) async {},
-                      onTap: () async {
-                        final DateTime? selectedDateTime = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(2015),
-                          lastDate: DateTime(2100),
-                        );
-                        if (selectedDateTime != null) {
-                          final TimeOfDay? selectedTime = await showTimePicker(
-                            context: context,
-                            initialTime: TimeOfDay.now(),
-                          );
-                          if (selectedTime != null) {
-                            setState(() {
-                              widget.endDate = DateTime(
-                                  selectedDateTime.year,
-                                  selectedDateTime.month,
-                                  selectedDateTime.day,
-                                  selectedTime.hour,
-                                  selectedTime.minute);
-                            });
-                          }
-                        }
-                      },
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: kPrimaryLightColor),
-                  onPressed: () async {
-                    var data = await fetchStudentsByDate(
-                        widget.startDate, widget.endDate);
-                    showModalBottomSheet(
-                      context: context,
-                      builder: (context) => SingleChildScrollView(
-                        child: Container(
-                          width: 500,
-                          height: 500,
-                          child: FilterAttendance(
-                            students: data,
-                          ),
-                          padding: EdgeInsets.only(
-                              bottom: MediaQuery.of(context).viewInsets.bottom),
-                        ),
-                      ),
-                    );
-                  },
-                  child: const Text("Get Date wise Attendance"),
-                ),
-
-                  ],
-                ),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class ReportGeneration extends StatefulWidget {
+  ReportGeneration({super.key});
+
+  var startDate = null;
+  var endDate = null;
+  @override
+  State<ReportGeneration> createState() => _ReportGenerationState();
+}
+
+class _ReportGenerationState extends State<ReportGeneration> {
+  bool isShow = false;
+  List<Map<String, dynamic>> persentage = [];
+  List<String> code = [];
+  User? user = FirebaseAuth.instance.currentUser;
+  @override
+  void initState() {
+    super.initState();
+    fetchStudentsReports();
+  }
+
+  Future<List<Map<String, dynamic>>> fetchStudentsReports() async {
+    final response = await http.post(Uri.parse(
+        '$kURL/attendance/all/${DateTime.now().toString().substring(0, 10)}'));
+
+    var data = json.decode(response.body);
+    code = [];
+    persentage = [];
+    print(data);
+    print(data.runtimeType);
+    for (dynamic i in data) {
+      Map<String, dynamic> map = {};
+      i.forEach((key, value) {
+        code.add(key);
+        print("$key");
+        value.forEach((key1, value1) {
+          map[key1] = value1;
+        });
+      });
+      persentage.add(map);
+    }
+    return persentage;
+  }
+
+  Future<List<Map<String, dynamic>>> fetchStudentsByDate(
+      DateTime startDate, DateTime endDate) async {
+    final response = await http.post(Uri.parse(
+        '$kURL/attendance/percentage-daily/${user!.email!.substring(0, user!.email!.indexOf("@"))}/${DateTime.now().subtract(Duration(days: 5)).millisecondsSinceEpoch}/${DateTime.now().millisecondsSinceEpoch}'));
+    var data = json.decode(response.body);
+    List<Map<String, dynamic>> students = [];
+    data.forEach((key, value) {
+      Map<String, dynamic> te = {};
+      te['sName'] = key;
+      te['value'] = value;
+      students.add(te);
+    });
+    return students;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: kPrimaryConstColor,
+      appBar: AppBar(
+        title: Center(child: Text("Report")),
+      ),
+      body: Column(
+        children: [
+          SizedBox(
+            height: 8,
+          ),
+          Text(
+            "Attendance Report",
+            style: TextStyle(fontSize: 24.0, color: Colors.white),
+          ),
+          SizedBox(
+            height: 8,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              RoundedInputField(
+                isList: false,
+                isDT: true,
+                isDes: false,
+                times: 0.45,
+                hintText: widget.startDate == null
+                    ? "Select Date and Time"
+                    : widget.startDate.toString().substring(0, 19),
+                icon: Icons.date_range,
+                onChanged: (value) async {
+                  // value =
+                  // await widget.startDate.toString().substring(0, 10);
+                },
+                onTap: () async {
+                  final DateTime? selectedDateTime = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now().subtract(Duration(days: 30)),
+                    firstDate: DateTime(2015),
+                    lastDate: DateTime(2100),
+                  );
+                  if (selectedDateTime != null) {
+                    final TimeOfDay? selectedTime = await showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay.now(),
+                    );
+                    if (selectedTime != null) {
+                      setState(() {
+                        print(selectedDateTime.toString());
+                        widget.startDate = DateTime(
+                            selectedDateTime.year,
+                            selectedDateTime.month,
+                            selectedDateTime.day,
+                            selectedTime.hour,
+                            selectedTime.minute);
+                      });
+                    }
+                  }
+                },
+              ),
+              RoundedInputField(
+                isList: false,
+                isDT: true,
+                isDes: false,
+                times: 0.45,
+                hintText: widget.endDate == null
+                    ? "End Date and Time"
+                    : widget.endDate.toString().substring(0, 19),
+                icon: Icons.date_range_outlined,
+                onChanged: (value) async {},
+                onTap: () async {
+                  final DateTime? selectedDateTime = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(2015),
+                    lastDate: DateTime(2100),
+                  );
+                  if (selectedDateTime != null) {
+                    final TimeOfDay? selectedTime = await showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay.now(),
+                    );
+                    if (selectedTime != null) {
+                      setState(() {
+                        widget.endDate = DateTime(
+                            selectedDateTime.year,
+                            selectedDateTime.month,
+                            selectedDateTime.day,
+                            selectedTime.hour,
+                            selectedTime.minute);
+                      });
+                    }
+                  }
+                },
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 8,
+          ),
+          ElevatedButton(
+            style:
+                ElevatedButton.styleFrom(backgroundColor: kPrimaryLightColor),
+            onPressed: () async {
+              var data =
+                  await fetchStudentsByDate(widget.startDate, widget.endDate);
+              showModalBottomSheet(
+                context: context,
+                builder: (context) => SingleChildScrollView(
+                  child: Container(
+                    width: 500,
+                    height: 500,
+                    child: FilterAttendance(
+                      students: data,
+                    ),
+                    padding: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).viewInsets.bottom),
+                  ),
+                ),
+              );
+            },
+            child: const Text("Get Date wise Attendance"),
+          ),
+          SizedBox(
+            height: 30,
+          ),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                isShow = true;
+              });
+            },
+            child: const Text("Get Overall Report"),
+          ),
+          SizedBox(
+            height: 30,
+          ),
+          if (isShow == true)
+            Container(
+              child: Expanded(
+                child: ListView.builder(
+                  itemCount: persentage.length,
+                  itemBuilder: (context, index) {
+                    final report = persentage[index];
+                    return Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: ListTile(
+                        tileColor: Color.fromARGB(255, 35, 93, 122),
+                        title: Text(
+                          " ${code[index]} present:${report['present']} absent:${report['absent']}",
+                          style: TextStyle(color: Colors.white, fontSize: 18),
+                        ),
+                        trailing: Text(
+                          "od:${report['od']}",
+                          style: TextStyle(
+                              // color: students[index]['value'] <= 74 ? Colors.red : Colors.green,
+                              color: Colors.white,
+                              fontSize: 18),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            )
+        ],
       ),
     );
   }
@@ -562,7 +694,10 @@ class FilterAttendance extends StatelessWidget {
                   ),
                   trailing: Text(
                     "${students[index]['value']}",
-                    style: TextStyle(color: students[index]['value'] <= 74 ? Colors.red : Colors.green, fontSize: 18),
+                    style: TextStyle(
+                        // color: students[index]['value'] <= 74 ? Colors.red : Colors.green,
+                        color: Colors.white,
+                        fontSize: 18),
                   ),
                 ),
               );

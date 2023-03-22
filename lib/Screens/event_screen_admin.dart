@@ -1,33 +1,129 @@
 import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:student_task_manager/Screens/AddEvent.dart';
+import 'package:student_task_manager/Screens/Home.dart';
 import 'package:student_task_manager/Screens/attendance_screen.dart';
+import 'package:student_task_manager/Screens/home_screen_teacher.dart';
 import 'package:student_task_manager/Screens/od_page_staffs.dart';
 import 'package:student_task_manager/Screens/od_page_student.dart';
-import 'package:student_task_manager/component/google_sign_in.dart';
+import 'package:student_task_manager/Screens/profile.dart';
 import 'package:student_task_manager/constant.dart';
-
-import 'package:flutter/cupertino.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
 
+import '../component/RoundedButton.dart';
+
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../component/google_sign_in.dart';
+
+String isSelected = "";
 bool isLoading = false;
 
-class TeacherScreen extends StatefulWidget {
-  const TeacherScreen({super.key});
-
+class HomeScreenAdmin extends StatefulWidget {
   @override
-  State<TeacherScreen> createState() => _TeacherScreenState();
+  State<HomeScreenAdmin> createState() => _HomeScreenAdminState();
 }
 
-class _TeacherScreenState extends State<TeacherScreen> {
+class _HomeScreenAdminState extends State<HomeScreenAdmin>
+    with SingleTickerProviderStateMixin {
+  var _selectedPage;
+
   @override
   void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    if (_selectedPage == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text("Welcome"),
+          centerTitle: true,
+        ),
+        body: Center(
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            color: Color(0xFF0A0E21),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                RoundedButton(
+                    sizee: 0.8,
+                    text: "CSE",
+                    press: () async {
+                      setState(() {
+                        _selectedPage = "CSE";
+                      });
+                    }),
+                RoundedButton(
+                    sizee: 0.8,
+                    text: "IT",
+                    press: () async {
+                      setState(() {
+                        _selectedPage = "IT";
+                      });
+                    }),
+                RoundedButton(
+                    sizee: 0.8,
+                    text: "CIVIL",
+                    press: () async {
+                      setState(() {
+                        _selectedPage = "CIVIL";
+                      });
+                    }),
+                RoundedButton(
+                    sizee: 0.8,
+                    text: "MECH",
+                    press: () async {
+                      setState(() {
+                        _selectedPage = "MECH";
+                      });
+                    }),
+              ],
+            ),
+          ),
+        ),
+      );
+    } else if (_selectedPage == "CSE") {
+      return EventScreenAdmin(classCode: "CSE");
+    } else if (_selectedPage == "IT") {
+      return EventScreenAdmin(classCode: "IT");
+    } else if (_selectedPage == "CIVIL") {
+      return EventScreenAdmin(classCode: "CIVIL");
+    } else {
+      return EventScreenAdmin(classCode: "MECH");
+    }
+  }
+}
+
+String cc = "";
+
+class EventScreenAdmin extends StatefulWidget {
+  EventScreenAdmin({required this.classCode});
+  String classCode;
+
+  @override
+  State<EventScreenAdmin> createState() => _EventScreenAdminState();
+}
+
+class _EventScreenAdminState extends State<EventScreenAdmin> {
+  @override
+  void initState() {
+    cc = widget.classCode;
     ApiService.fetchStudents();
   }
 
@@ -66,22 +162,22 @@ class _TeacherScreenState extends State<TeacherScreen> {
                   ),
                 );
               }, Icons.task),
-              Listofgames(2, "Attendance", () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => TakeOrRefer(),
-                  ),
-                );
-              }, Icons.check),
-              Listofgames(3, "On Duty", () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ODListScreen(),
-                  ),
-                );
-              }, Icons.add)
+              // Listofgames(2, "Attendance", () {
+              //   Navigator.push(
+              //     context,
+              //     MaterialPageRoute(
+              //       builder: (context) => TakeOrRefer(),
+              //     ),
+              //   );
+              // }, Icons.check),
+              // Listofgames(3, "On Duty", () {
+              //   Navigator.push(
+              //     context,
+              //     MaterialPageRoute(
+              //       builder: (context) => ODListScreen(),
+              //     ),
+              //   );
+              // }, Icons.add)
               //   ],
               // )
             ],
@@ -171,7 +267,6 @@ class EventScreenTeacher extends StatefulWidget {
 }
 
 class _EventScreenTeacherState extends State<EventScreenTeacher> {
-
   late Future<List<dynamic>> _data;
   List<Map<String, dynamic>> reports = [];
   Map<String, int> reports_stats = {};
@@ -271,9 +366,9 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
                               isLoading = true;
                             });
                             await fetchReportsStats(
-                                "$kURL/events/stats/${snapshot.data![index]['eventId']}/${user!.email!.substring(0, user!.email!.indexOf("@"))}");
+                                "$kURL/events/stats-by-class-code/${snapshot.data![index]['eventId']}/$cc");
                             await fetchReports(
-                                "$kURL/events/stats-list/${snapshot.data![index]['eventId']}/${user!.email!.substring(0, user!.email!.indexOf("@"))}");
+                                "$kURL/events/stats-list-by-class-code/${snapshot.data![index]['eventId']}/$cc");
                             setState(() {
                               isLoading = false;
                               _data = fetchData(user);
@@ -304,12 +399,10 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
                               border: Border.all(color: Colors.grey),
                               borderRadius: BorderRadius.circular(5),
                             ),
-                            child: 
-                            Column(
+                            child: Column(
                               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               // crossAxisAlignment: CrossAxisAlignment.,
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
@@ -359,13 +452,11 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
                                           snapshot.data![index]['fromDate']
                                                   .toString()
                                                   .substring(8, 10) +
-                                              snapshot.data![index]
-                                                      ['fromDate']
+                                              snapshot.data![index]['fromDate']
                                                   .toString()
                                                   .substring(4, 7) +
                                               "-" +
-                                              snapshot.data![index]
-                                                      ['fromDate']
+                                              snapshot.data![index]['fromDate']
                                                   .toString()
                                                   .substring(2, 4) +
                                               "  " +
@@ -379,7 +470,8 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
                                       Text("|",
                                           style: TextStyle(
                                               color: Colors.white,
-                                              fontWeight: FontWeight.bold, fontSize: 20)),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20)),
                                       Text(
                                         snapshot.data![index]['endDate']
                                                 .toString()
@@ -457,7 +549,7 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
       );
     });
     final response = await http.post(Uri.parse(
-        '$kURL/events/pending/${user!.email!.substring(0, user.email!.indexOf("@"))}'));
+        '$kURL/events/pending-by-class-code/$cc'));
     // print(response.body);
     if (response.statusCode == 200) {
       // If the call to the server was successful, parse the JSON

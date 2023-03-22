@@ -136,7 +136,7 @@ class _EventScreenState extends State<EventScreen> {
                               setState(() {
                                 isLoading = true;
                               });
-                              print(user!.displayName);
+                              // print(user!.displayName);
                               await http.post(Uri.parse(
                                   "$kURL/student/update/${user!.email!.substring(0, user!.email!.indexOf("@"))}/${snapshot.data![index]['eventId']}"));
                               setState(() async {

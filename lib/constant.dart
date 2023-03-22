@@ -78,13 +78,13 @@ MaterialColor kMatColor = MaterialColor(
   },
 );
 
-  String timeText(String string) {
-    String timeString = "14:30:00";
-    DateTime time = DateTime.parse("1970-01-01 $string");
+String timeText(String string) {
+  String timeString = "14:30:00";
+  DateTime time = DateTime.parse("1970-01-01 $string");
 
-    String formattedTime = DateFormat('h:mm a').format(time);
-    return formattedTime;
-  }
+  String formattedTime = DateFormat('h:mm a').format(time);
+  return formattedTime;
+}
 
 Future<List<dynamic>> fetchData(User? user) async {
   final response = await http.post(Uri.parse(
@@ -143,3 +143,5 @@ class Listofgames extends StatelessWidget {
     );
   }
 }
+
+const kPrimaryConstColor = Color(0xFF0A0E21);
