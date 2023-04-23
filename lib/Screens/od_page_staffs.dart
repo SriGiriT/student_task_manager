@@ -180,12 +180,12 @@ class _OdStudentState extends State<OdStudent> {
                               if (selectedTime != null) {
                                 setState(() {
                                   // print(selectedDateTime.toString());
-                                  // startDate = DateTime(
-                                  //     selectedDateTime.year,
-                                  //     selectedDateTime.month,
-                                  //     selectedDateTime.day,
-                                  //     selectedTime.hour,
-                                  //     selectedTime.minute);
+                                  startDate = DateTime(
+                                      selectedDateTime.year,
+                                      selectedDateTime.month,
+                                      selectedDateTime.day,
+                                      selectedTime.hour,
+                                      selectedTime.minute);
                                 });
                               }
                             }

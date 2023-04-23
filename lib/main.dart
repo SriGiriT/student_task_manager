@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
@@ -18,6 +19,8 @@ import 'package:student_task_manager/Screens/AddEvent.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:student_task_manager/nyapp.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+
+import 'Screens/test.dart';
 
 const AndroidNotificationChannel channel =
     AndroidNotificationChannel('high_importance_channel', 'High Importance',
@@ -57,9 +60,16 @@ void showFlutterNotification(RemoteMessage message) {
     );
   }
 }
-
+// class MyHttpOverrides extends HttpOverrides{
+//   @override
+//   HttpClient createHttpClient(SecurityContext? context){
+//     return super.createHttpClient(context)
+//       ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
+//   }
+// }
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // HttpOverrides.global = MyHttpOverrides();
   await Firebase.initializeApp();
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   await flutterLocalNotificationsPlugin
@@ -165,7 +175,64 @@ class _MyAppState extends State<MyApp> {
           debugShowCheckedModeBanner: false,
           initialRoute: '/',
           routes: {
-            '/': (context) => CommonWelcome(),
+            '/':(context) => CommonWelcome(),
+            '/timeTable': (context) => StaffTimetable(timetable: {
+    "id": 24,
+    "staff": {
+      "staffId": "sugankpms",
+      "name": "sugankpms",
+      "mail": "sugankpms@gmail.com",
+      "mobile": "8477822052",
+      "classCode": "CSE",
+      "present": false,
+      "presentKt": false
+    },
+    "dayOne": [
+      "'Free",
+      "Free",
+      "JAVA",
+      "Free",
+      "Free",
+      "Free",
+      "Free'"
+    ],
+    "dayTwo": [
+      "'Free",
+      "Free",
+      "Free",
+      "Free",
+      "Free",
+      "Free",
+      "Free'"
+    ],
+    "dayThree": [
+      "'Free",
+      "Free",
+      "Free",
+      "Free",
+      "Free",
+      "Free",
+      "Free'"
+    ],
+    "dayFour": [
+      "'Free",
+      "Free",
+      "Free",
+      "Free",
+      "Free",
+      "Free",
+      "Free'"
+    ],
+    "dayFive": [
+      "'Free",
+      "Free",
+      "Free",
+      "Free",
+      "Free",
+      "Free",
+      "PCD'"
+    ]
+  },),
             '/event': (context) => EventScreen(),
             '/eventte': (context) => EventScreenTeacher(),
             '/tescreen': (context) => HomeScreenTeacher(),

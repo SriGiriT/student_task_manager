@@ -412,7 +412,7 @@ class _AbsenteesPageState extends State<AbsenteesPage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(
-                                    Icons.whatsapp,
+                                    Icons.message,
                                   ),
                                   Container(
                                     child: Text(" Whatsapp"),
@@ -485,7 +485,7 @@ class _ReportGenerationState extends State<ReportGeneration> {
   Future<List<Map<String, dynamic>>> fetchStudentsByDate(
       DateTime startDate, DateTime endDate) async {
     final response = await http.post(Uri.parse(
-        '$kURL/attendance/percentage-daily/${user!.email!.substring(0, user!.email!.indexOf("@"))}/${DateTime.now().subtract(Duration(days: 5)).millisecondsSinceEpoch}/${DateTime.now().millisecondsSinceEpoch}'));
+        '$kURL/attendance/percentage-daily/${user!.email!.substring(0, user!.email!.indexOf("@"))}/${DateTime.now().subtract(Duration(days: 50)).millisecondsSinceEpoch}/${DateTime.now().millisecondsSinceEpoch}'));
     var data = json.decode(response.body);
     List<Map<String, dynamic>> students = [];
     data.forEach((key, value) {
@@ -693,7 +693,7 @@ class FilterAttendance extends StatelessWidget {
                     style: TextStyle(color: Colors.white, fontSize: 18),
                   ),
                   trailing: Text(
-                    "${students[index]['value']}",
+                    "${students[index]['value'].toStringAsFixed(2)}",
                     style: TextStyle(
                         // color: students[index]['value'] <= 74 ? Colors.red : Colors.green,
                         color: Colors.white,

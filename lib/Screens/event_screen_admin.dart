@@ -619,7 +619,7 @@ class _StudentListState extends State<StudentList> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            icon: Icon(Icons.whatsapp),
+                            icon: Icon(Icons.message),
                             onPressed: () => launch(
                                 "whatsapp://send?phone=+91${student['mobile']}"),
                           ),

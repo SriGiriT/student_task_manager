@@ -10,6 +10,7 @@ import 'package:student_task_manager/Screens/AddEvent.dart';
 import 'package:student_task_manager/Screens/attendance_screen.dart';
 import 'package:student_task_manager/Screens/od_page_staffs.dart';
 import 'package:student_task_manager/Screens/od_page_student.dart';
+import 'package:student_task_manager/Screens/test.dart';
 import 'package:student_task_manager/component/google_sign_in.dart';
 import 'package:student_task_manager/constant.dart';
 
@@ -26,9 +27,46 @@ class TeacherScreen extends StatefulWidget {
 }
 
 class _TeacherScreenState extends State<TeacherScreen> {
+  late Map<String, dynamic> timetable = {
+    "id": 24,
+    "staff": {
+      "staffId": "sugankpms",
+      "name": "sugankpms",
+      "mail": "sugankpms@gmail.com",
+      "mobile": "8477822052",
+      "classCode": "CSE",
+      "present": false,
+      "presentKt": false
+    },
+    "dayOne": ["'Free", "Free", "JAVA", "Free", "Free", "Free", "Free'"],
+    "dayTwo": ["'Free", "Free", "Free", "Free", "Free", "Free", "Free'"],
+    "dayThree": ["'Free", "Free", "Free", "Free", "Free", "Free", "Free'"],
+    "dayFour": ["'Free", "Free", "Free", "Free", "Free", "Free", "Free'"],
+    "dayFive": ["'Free", "Free", "Free", "Free", "Free", "Free", "PCD'"]
+  };
   @override
   void initState() {
+    getTimeTable();
     ApiService.fetchStudents();
+  }
+
+  Future<void> getTimeTable() async {
+    setState(() {
+      isLoading = true;
+    });
+    User? user = FirebaseAuth.instance.currentUser;
+    final response = await http.post(Uri.parse(
+        '$kURL/staff/timetable/get/${user!.email!.substring(0, user!.email!.indexOf("@"))}'));
+    // final response =
+    //     await http.post(Uri.parse('$kURL/staff/timetable/get/sugankpms'));
+    // print(DateTime.now().toString().substring(0, 10));
+    var data = json.decode(response.body);
+    Map<String, dynamic> timetablee = data;
+
+    setState(() {
+      timetable = timetablee;
+      isLoading = false;
+    });
   }
 
   @override
@@ -38,6 +76,18 @@ class _TeacherScreenState extends State<TeacherScreen> {
       appBar: AppBar(
         title: Center(child: Text('Staff Page')),
         actions: <Widget>[
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => StaffTimetable(
+                      timetable: timetable,
+                    ),
+                  ),
+                );
+              },
+              icon: Icon(Icons.schedule)),
           TextButton(
               onPressed: () {
                 final provider =
@@ -171,7 +221,6 @@ class EventScreenTeacher extends StatefulWidget {
 }
 
 class _EventScreenTeacherState extends State<EventScreenTeacher> {
-
   late Future<List<dynamic>> _data;
   List<Map<String, dynamic>> reports = [];
   Map<String, int> reports_stats = {};
@@ -304,12 +353,10 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
                               border: Border.all(color: Colors.grey),
                               borderRadius: BorderRadius.circular(5),
                             ),
-                            child: 
-                            Column(
+                            child: Column(
                               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               // crossAxisAlignment: CrossAxisAlignment.,
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
@@ -359,13 +406,11 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
                                           snapshot.data![index]['fromDate']
                                                   .toString()
                                                   .substring(8, 10) +
-                                              snapshot.data![index]
-                                                      ['fromDate']
+                                              snapshot.data![index]['fromDate']
                                                   .toString()
                                                   .substring(4, 7) +
                                               "-" +
-                                              snapshot.data![index]
-                                                      ['fromDate']
+                                              snapshot.data![index]['fromDate']
                                                   .toString()
                                                   .substring(2, 4) +
                                               "  " +
@@ -379,7 +424,8 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
                                       Text("|",
                                           style: TextStyle(
                                               color: Colors.white,
-                                              fontWeight: FontWeight.bold, fontSize: 20)),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20)),
                                       Text(
                                         snapshot.data![index]['endDate']
                                                 .toString()
@@ -527,7 +573,7 @@ class _StudentListState extends State<StudentList> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            icon: Icon(Icons.whatsapp),
+                            icon: Icon(Icons.message),
                             onPressed: () => launch(
                                 "whatsapp://send?phone=+91${student['mobile']}"),
                           ),
