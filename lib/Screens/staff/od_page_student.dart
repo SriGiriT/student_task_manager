@@ -9,7 +9,7 @@ import 'package:student_task_manager/component/google_sign_in.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:typed_data';
 
-import '../constant.dart';
+import '../../constant.dart';
 
 bool isLoading = false;
 

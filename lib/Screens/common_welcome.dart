@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:student_task_manager/Screens/Home.dart';
-import 'package:student_task_manager/Screens/attendance_screen.dart';
-import 'package:student_task_manager/Screens/event_screen_admin.dart';
-import 'package:student_task_manager/Screens/home_screen_teacher.dart';
-import 'package:student_task_manager/Screens/od_page_staffs.dart';
-import 'package:student_task_manager/Screens/profile.dart';
+import 'package:student_task_manager/Screens/student/Home.dart';
+import 'package:student_task_manager/Screens/staff/attendance_screen.dart';
+import 'package:student_task_manager/Screens/admin/event_screen_admin.dart';
+import 'package:student_task_manager/Screens/staff/home_screen_teacher.dart';
+import 'package:student_task_manager/Screens/student/od_page_staffs.dart';
+import 'package:student_task_manager/Screens/temp/profile.dart';
 import 'package:student_task_manager/constant.dart';
 
 import '../component/RoundedButton.dart';

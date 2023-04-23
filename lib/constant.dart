@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
-import 'package:student_task_manager/Screens/attendance_screen.dart';
+import 'package:student_task_manager/Screens/staff/attendance_screen.dart';
 import 'package:intl/intl.dart';
 
 String kURL = "https://tidy-puma-7.telebit.io";

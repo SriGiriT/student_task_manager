@@ -2,22 +2,19 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
-import 'package:student_task_manager/Screens/AddEvent.dart';
-import 'package:student_task_manager/Screens/EventScreen.dart';
+import 'package:student_task_manager/Screens/staff/AddEvent.dart';
+import 'package:student_task_manager/Screens/student/EventScreen.dart';
 import 'package:student_task_manager/Screens/Welcome_signup.dart';
-import 'package:student_task_manager/Screens/event_screen_teacher.dart';
-import 'package:student_task_manager/Screens/profile.dart';
+import 'package:student_task_manager/Screens/temp/profile.dart';
 import 'package:student_task_manager/component/google_sign_in.dart';
-import 'package:student_task_manager/Screens/profile.dart';
+import 'package:student_task_manager/Screens/temp/profile.dart';
 
-//import 'package:flutter_svg/svg.dart';
-
-class HomeScreenTeacher extends StatefulWidget {
+class HomeScreenStudent extends StatefulWidget {
   @override
-  State<HomeScreenTeacher> createState() => _HomeScreenTeacherState();
+  State<HomeScreenStudent> createState() => _HomeScreenStudentState();
 }
 
-class _HomeScreenTeacherState extends State<HomeScreenTeacher> {
+class _HomeScreenStudentState extends State<HomeScreenStudent> {
   @override
   Widget build(BuildContext context) => Scaffold(
         body: StreamBuilder(
@@ -30,7 +27,7 @@ class _HomeScreenTeacherState extends State<HomeScreenTeacher> {
                   child: Text("Something went wrong!"),
                 );
               else if (snapshot.hasData) {
-                return TeacherScreen();
+                return StudentScreen();
               } else
                 return WelcomeScreenSignUp();
             }),

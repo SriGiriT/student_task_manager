@@ -2,12 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'package:student_task_manager/Screens/EventScreen.dart';
+import 'package:student_task_manager/Screens/student/EventScreen.dart';
 import 'dart:convert';
 import 'package:student_task_manager/constant.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../component/RoundedInputFeild.dart';
+import '../../component/RoundedInputFeild.dart';
 
 bool isLoading = false;
 List<String> abse = [];

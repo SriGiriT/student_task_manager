@@ -1,130 +1,127 @@
 import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:student_task_manager/Screens/AddEvent.dart';
-import 'package:student_task_manager/Screens/Home.dart';
-import 'package:student_task_manager/Screens/attendance_screen.dart';
-import 'package:student_task_manager/Screens/home_screen_teacher.dart';
-import 'package:student_task_manager/Screens/od_page_staffs.dart';
-import 'package:student_task_manager/Screens/od_page_student.dart';
-import 'package:student_task_manager/Screens/profile.dart';
-import 'package:student_task_manager/constant.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
-
-import '../component/RoundedButton.dart';
-
-import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:student_task_manager/Screens/staff/AddEvent.dart';
+import 'package:student_task_manager/Screens/staff/attendance_screen.dart';
+import 'package:student_task_manager/Screens/staff/staff_timetable.dart';
+import 'package:student_task_manager/Screens/student/od_page_staffs.dart';
+import 'package:student_task_manager/Screens/staff/od_page_student.dart';
+import 'package:student_task_manager/component/google_sign_in.dart';
+import 'package:student_task_manager/constant.dart';
 
-import '../component/google_sign_in.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-String isSelected = "";
 bool isLoading = false;
 
-class HomeScreenAdmin extends StatefulWidget {
+class TeacherScreen extends StatefulWidget {
+  const TeacherScreen({super.key});
+
   @override
-  State<HomeScreenAdmin> createState() => _HomeScreenAdminState();
+  State<TeacherScreen> createState() => _TeacherScreenState();
 }
 
-class _HomeScreenAdminState extends State<HomeScreenAdmin>
-    with SingleTickerProviderStateMixin {
-  var _selectedPage;
-
+class _TeacherScreenState extends State<TeacherScreen> {
+  late bool _attendanceTaken;
+  late bool _present;
+  late String _attendanceDate;
+  late SharedPreferences _prefs;
+  late Map<String, dynamic> timetable = {
+    "id": 24,
+    "staff": {
+      "staffId": "sugankpms",
+      "name": "sugankpms",
+      "mail": "sugankpms@gmail.com",
+      "mobile": "8477822052",
+      "classCode": "CSE",
+      "present": false,
+      "presentKt": false
+    },
+    "dayOne": ["'Free", "Free", "JAVA", "Free", "Free", "Free", "Free'"],
+    "dayTwo": ["'Free", "Free", "Free", "Free", "Free", "Free", "Free'"],
+    "dayThree": ["'Free", "Free", "Free", "Free", "Free", "Free", "Free'"],
+    "dayFour": ["'Free", "Free", "Free", "Free", "Free", "Free", "Free'"],
+    "dayFive": ["'Free", "Free", "Free", "Free", "Free", "Free", "PCD'"]
+  };
   @override
   void initState() {
+    getTimeTable();
     super.initState();
+    _attendanceTaken = false;
+    _present = false;
+    _attendanceDate = DateTime.now().toString().substring(0, 10);
+    _initPrefs();
+    ApiService.fetchStudents();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-
-
-  @override
-  Widget build(BuildContext context) {
-    if (_selectedPage == null) {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text("Welcome"),
-          centerTitle: true,
-        ),
-        body: Center(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            color: Color(0xFF0A0E21),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                RoundedButton(
-                    sizee: 0.8,
-                    text: "CSE",
-                    press: () async {
-                      setState(() {
-                        _selectedPage = "CSE";
-                      });
-                    }),
-                RoundedButton(
-                    sizee: 0.8,
-                    text: "IT",
-                    press: () async {
-                      setState(() {
-                        _selectedPage = "IT";
-                      });
-                    }),
-                RoundedButton(
-                    sizee: 0.8,
-                    text: "CIVIL",
-                    press: () async {
-                      setState(() {
-                        _selectedPage = "CIVIL";
-                      });
-                    }),
-                RoundedButton(
-                    sizee: 0.8,
-                    text: "MECH",
-                    press: () async {
-                      setState(() {
-                        _selectedPage = "MECH";
-                      });
-                    }),
-              ],
-            ),
-          ),
-        ),
-      );
-    } else if (_selectedPage == "CSE") {
-      return EventScreenAdmin(classCode: "CSE");
-    } else if (_selectedPage == "IT") {
-      return EventScreenAdmin(classCode: "IT");
-    } else if (_selectedPage == "CIVIL") {
-      return EventScreenAdmin(classCode: "CIVIL");
+  Future<void> _initPrefs() async {
+    _prefs = await SharedPreferences.getInstance();
+    bool? attendanceTaken = _prefs.getBool('attendanceTaken');
+    String? attendanceDate = _prefs.getString('attendanceDate');
+    if (attendanceTaken != null && attendanceDate != null) {
+      if (attendanceDate == _attendanceDate) {
+        _attendanceTaken = attendanceTaken;
+      } else {
+        _attendanceTaken = false;
+        _prefs.setBool('attendanceTaken', false);
+        _prefs.setString('attendanceDate', _attendanceDate);
+      }
     } else {
-      return EventScreenAdmin(classCode: "MECH");
+      _prefs.setBool('attendanceTaken', false);
+      _prefs.setString('attendanceDate', _attendanceDate);
     }
   }
-}
 
-String cc = "";
+  Future<void> _setAttendance(bool present) async {
+    setState(() {
+      _present = present;
+    });
+    final response = await http.post(
+      Uri.parse('${kURL}/staff/attendance/put/sugankpms/$present'),
+      body: jsonEncode(<String, bool>{
+        'present': present,
+      }),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Attendance recorded')),
+      );
+      setState(() {
+        _prefs.setBool('attendanceTaken', true);
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error recording attendance')),
+      );
+    }
+  }
 
-class EventScreenAdmin extends StatefulWidget {
-  EventScreenAdmin({required this.classCode});
-  String classCode;
+  Future<void> getTimeTable() async {
+    setState(() {
+      isLoading = true;
+    });
+    User? user = FirebaseAuth.instance.currentUser;
+    final response = await http.post(Uri.parse(
+        '$kURL/staff/timetable/get/${user!.email!.substring(0, user!.email!.indexOf("@"))}'));
+    // final response =
+    //     await http.post(Uri.parse('$kURL/staff/timetable/get/sugankpms'));
+    // print(DateTime.now().toString().substring(0, 10));
+    var data = json.decode(response.body);
+    Map<String, dynamic> timetablee = data;
 
-  @override
-  State<EventScreenAdmin> createState() => _EventScreenAdminState();
-}
-
-class _EventScreenAdminState extends State<EventScreenAdmin> {
-  @override
-  void initState() {
-    cc = widget.classCode;
-    ApiService.fetchStudents();
+    setState(() {
+      timetable = timetablee;
+      isLoading = false;
+    });
   }
 
   @override
@@ -134,6 +131,55 @@ class _EventScreenAdminState extends State<EventScreenAdmin> {
       appBar: AppBar(
         title: Center(child: Text('Staff Page')),
         actions: <Widget>[
+          if (!_attendanceTaken)
+            IconButton(
+              icon: Icon(Icons.person_add),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text('Attendance'),
+                      content: SingleChildScrollView(
+                        child: ListBody(
+                          children: <Widget>[
+                            Text('Are you present?'),
+                          ],
+                        ),
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          child: Text('Present'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            _setAttendance(true);
+                          },
+                        ),
+                        TextButton(
+                          child: Text('Absent'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            _setAttendance(false);
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => StaffTimetable(
+                      timetable: timetable,
+                    ),
+                  ),
+                );
+              },
+              icon: Icon(Icons.schedule)),
           TextButton(
               onPressed: () {
                 final provider =
@@ -162,22 +208,22 @@ class _EventScreenAdminState extends State<EventScreenAdmin> {
                   ),
                 );
               }, Icons.task),
-              // Listofgames(2, "Attendance", () {
-              //   Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //       builder: (context) => TakeOrRefer(),
-              //     ),
-              //   );
-              // }, Icons.check),
-              // Listofgames(3, "On Duty", () {
-              //   Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //       builder: (context) => ODListScreen(),
-              //     ),
-              //   );
-              // }, Icons.add)
+              Listofgames(2, "Attendance", () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => TakeOrRefer(),
+                  ),
+                );
+              }, Icons.check),
+              Listofgames(3, "On Duty", () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ODListScreen(),
+                  ),
+                );
+              }, Icons.add)
               //   ],
               // )
             ],
@@ -366,9 +412,9 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
                               isLoading = true;
                             });
                             await fetchReportsStats(
-                                "$kURL/events/stats-by-class-code/${snapshot.data![index]['eventId']}/$cc");
+                                "$kURL/events/stats/${snapshot.data![index]['eventId']}/${user!.email!.substring(0, user!.email!.indexOf("@"))}");
                             await fetchReports(
-                                "$kURL/events/stats-list-by-class-code/${snapshot.data![index]['eventId']}/$cc");
+                                "$kURL/events/stats-list/${snapshot.data![index]['eventId']}/${user!.email!.substring(0, user!.email!.indexOf("@"))}");
                             setState(() {
                               isLoading = false;
                               _data = fetchData(user);
@@ -549,7 +595,7 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
       );
     });
     final response = await http.post(Uri.parse(
-        '$kURL/events/pending-by-class-code/$cc'));
+        '$kURL/events/pending/${user!.email!.substring(0, user.email!.indexOf("@"))}'));
     // print(response.body);
     if (response.statusCode == 200) {
       // If the call to the server was successful, parse the JSON

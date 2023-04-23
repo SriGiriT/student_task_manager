@@ -8,7 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:student_task_manager/component/RoundedButton.dart';
 import 'package:student_task_manager/constant.dart';
 
-import '../component/RoundedInputFeild.dart';
+import '../../component/RoundedInputFeild.dart';
 
 File? imageFile = null;
 bool isLoading = false;

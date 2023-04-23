@@ -1,72 +1,130 @@
 import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
-import 'package:student_task_manager/Screens/AddEvent.dart';
-import 'package:student_task_manager/Screens/attendance_screen.dart';
-import 'package:student_task_manager/Screens/od_page_staffs.dart';
-import 'package:student_task_manager/Screens/od_page_student.dart';
-import 'package:student_task_manager/Screens/test.dart';
-import 'package:student_task_manager/component/google_sign_in.dart';
-import 'package:student_task_manager/constant.dart';
-
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:student_task_manager/Screens/staff/AddEvent.dart';
+import 'package:student_task_manager/Screens/student/Home.dart';
+import 'package:student_task_manager/Screens/staff/attendance_screen.dart';
+import 'package:student_task_manager/Screens/staff/home_screen_teacher.dart';
+import 'package:student_task_manager/Screens/student/od_page_staffs.dart';
+import 'package:student_task_manager/Screens/staff/od_page_student.dart';
+import 'package:student_task_manager/Screens/temp/profile.dart';
+import 'package:student_task_manager/constant.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
 
+import '../../component/RoundedButton.dart';
+
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../component/google_sign_in.dart';
+
+String isSelected = "";
 bool isLoading = false;
 
-class TeacherScreen extends StatefulWidget {
-  const TeacherScreen({super.key});
-
+class HomeScreenAdmin extends StatefulWidget {
   @override
-  State<TeacherScreen> createState() => _TeacherScreenState();
+  State<HomeScreenAdmin> createState() => _HomeScreenAdminState();
 }
 
-class _TeacherScreenState extends State<TeacherScreen> {
-  late Map<String, dynamic> timetable = {
-    "id": 24,
-    "staff": {
-      "staffId": "sugankpms",
-      "name": "sugankpms",
-      "mail": "sugankpms@gmail.com",
-      "mobile": "8477822052",
-      "classCode": "CSE",
-      "present": false,
-      "presentKt": false
-    },
-    "dayOne": ["'Free", "Free", "JAVA", "Free", "Free", "Free", "Free'"],
-    "dayTwo": ["'Free", "Free", "Free", "Free", "Free", "Free", "Free'"],
-    "dayThree": ["'Free", "Free", "Free", "Free", "Free", "Free", "Free'"],
-    "dayFour": ["'Free", "Free", "Free", "Free", "Free", "Free", "Free'"],
-    "dayFive": ["'Free", "Free", "Free", "Free", "Free", "Free", "PCD'"]
-  };
+class _HomeScreenAdminState extends State<HomeScreenAdmin>
+    with SingleTickerProviderStateMixin {
+  var _selectedPage;
+
   @override
   void initState() {
-    getTimeTable();
-    ApiService.fetchStudents();
+    super.initState();
   }
 
-  Future<void> getTimeTable() async {
-    setState(() {
-      isLoading = true;
-    });
-    User? user = FirebaseAuth.instance.currentUser;
-    final response = await http.post(Uri.parse(
-        '$kURL/staff/timetable/get/${user!.email!.substring(0, user!.email!.indexOf("@"))}'));
-    // final response =
-    //     await http.post(Uri.parse('$kURL/staff/timetable/get/sugankpms'));
-    // print(DateTime.now().toString().substring(0, 10));
-    var data = json.decode(response.body);
-    Map<String, dynamic> timetablee = data;
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
-    setState(() {
-      timetable = timetablee;
-      isLoading = false;
-    });
+
+
+  @override
+  Widget build(BuildContext context) {
+    if (_selectedPage == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text("Welcome"),
+          centerTitle: true,
+        ),
+        body: Center(
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            color: Color(0xFF0A0E21),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                RoundedButton(
+                    sizee: 0.8,
+                    text: "CSE",
+                    press: () async {
+                      setState(() {
+                        _selectedPage = "CSE";
+                      });
+                    }),
+                RoundedButton(
+                    sizee: 0.8,
+                    text: "IT",
+                    press: () async {
+                      setState(() {
+                        _selectedPage = "IT";
+                      });
+                    }),
+                RoundedButton(
+                    sizee: 0.8,
+                    text: "CIVIL",
+                    press: () async {
+                      setState(() {
+                        _selectedPage = "CIVIL";
+                      });
+                    }),
+                RoundedButton(
+                    sizee: 0.8,
+                    text: "MECH",
+                    press: () async {
+                      setState(() {
+                        _selectedPage = "MECH";
+                      });
+                    }),
+              ],
+            ),
+          ),
+        ),
+      );
+    } else if (_selectedPage == "CSE") {
+      return EventScreenAdmin(classCode: "CSE");
+    } else if (_selectedPage == "IT") {
+      return EventScreenAdmin(classCode: "IT");
+    } else if (_selectedPage == "CIVIL") {
+      return EventScreenAdmin(classCode: "CIVIL");
+    } else {
+      return EventScreenAdmin(classCode: "MECH");
+    }
+  }
+}
+
+String cc = "";
+
+class EventScreenAdmin extends StatefulWidget {
+  EventScreenAdmin({required this.classCode});
+  String classCode;
+
+  @override
+  State<EventScreenAdmin> createState() => _EventScreenAdminState();
+}
+
+class _EventScreenAdminState extends State<EventScreenAdmin> {
+  @override
+  void initState() {
+    cc = widget.classCode;
+    ApiService.fetchStudents();
   }
 
   @override
@@ -76,18 +134,6 @@ class _TeacherScreenState extends State<TeacherScreen> {
       appBar: AppBar(
         title: Center(child: Text('Staff Page')),
         actions: <Widget>[
-          IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => StaffTimetable(
-                      timetable: timetable,
-                    ),
-                  ),
-                );
-              },
-              icon: Icon(Icons.schedule)),
           TextButton(
               onPressed: () {
                 final provider =
@@ -116,22 +162,22 @@ class _TeacherScreenState extends State<TeacherScreen> {
                   ),
                 );
               }, Icons.task),
-              Listofgames(2, "Attendance", () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => TakeOrRefer(),
-                  ),
-                );
-              }, Icons.check),
-              Listofgames(3, "On Duty", () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ODListScreen(),
-                  ),
-                );
-              }, Icons.add)
+              // Listofgames(2, "Attendance", () {
+              //   Navigator.push(
+              //     context,
+              //     MaterialPageRoute(
+              //       builder: (context) => TakeOrRefer(),
+              //     ),
+              //   );
+              // }, Icons.check),
+              // Listofgames(3, "On Duty", () {
+              //   Navigator.push(
+              //     context,
+              //     MaterialPageRoute(
+              //       builder: (context) => ODListScreen(),
+              //     ),
+              //   );
+              // }, Icons.add)
               //   ],
               // )
             ],
@@ -320,9 +366,9 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
                               isLoading = true;
                             });
                             await fetchReportsStats(
-                                "$kURL/events/stats/${snapshot.data![index]['eventId']}/${user!.email!.substring(0, user!.email!.indexOf("@"))}");
+                                "$kURL/events/stats-by-class-code/${snapshot.data![index]['eventId']}/$cc");
                             await fetchReports(
-                                "$kURL/events/stats-list/${snapshot.data![index]['eventId']}/${user!.email!.substring(0, user!.email!.indexOf("@"))}");
+                                "$kURL/events/stats-list-by-class-code/${snapshot.data![index]['eventId']}/$cc");
                             setState(() {
                               isLoading = false;
                               _data = fetchData(user);
@@ -503,7 +549,7 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
       );
     });
     final response = await http.post(Uri.parse(
-        '$kURL/events/pending/${user!.email!.substring(0, user.email!.indexOf("@"))}'));
+        '$kURL/events/pending-by-class-code/$cc'));
     // print(response.body);
     if (response.statusCode == 200) {
       // If the call to the server was successful, parse the JSON

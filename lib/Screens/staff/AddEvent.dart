@@ -10,7 +10,7 @@ import 'package:student_task_manager/component/TextFieldContainer.dart';
 import 'package:student_task_manager/constant.dart';
 import 'package:http/http.dart' as http;
 
-import '../component/google_sign_in.dart';
+import '../../component/google_sign_in.dart';
 
 const List<String> yearList = ['All','I', 'II', 'III', 'IV', 'V'];
 const List<String> deptList = ['CSE', 'IT', 'ECE', 'EEE', 'MTECH'];

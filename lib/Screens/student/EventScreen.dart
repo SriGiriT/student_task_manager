@@ -4,13 +4,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-import 'package:student_task_manager/Screens/attendance_screen.dart';
-import 'package:student_task_manager/Screens/event_screen_teacher.dart';
-import 'package:student_task_manager/Screens/od_page_staffs.dart';
+import 'package:student_task_manager/Screens/staff/attendance_screen.dart';
+import 'package:student_task_manager/Screens/staff/event_screen_teacher.dart';
+import 'package:student_task_manager/Screens/student/od_page_staffs.dart';
 import 'package:student_task_manager/component/google_sign_in.dart';
 import 'package:student_task_manager/constant.dart';
 
-import 'od_page_student.dart';
+import '../staff/od_page_student.dart';
 
 class EventScreen extends StatefulWidget {
   @override

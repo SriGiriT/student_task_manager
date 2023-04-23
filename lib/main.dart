@@ -7,20 +7,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-import 'package:student_task_manager/Screens/attendance_screen.dart';
+import 'package:student_task_manager/Screens/staff/attendance_screen.dart';
 import 'package:student_task_manager/Screens/common_welcome.dart';
-import 'package:student_task_manager/Screens/event_screen_teacher.dart';
-import 'package:student_task_manager/Screens/home_screen_teacher.dart';
+import 'package:student_task_manager/Screens/staff/event_screen_teacher.dart';
+import 'package:student_task_manager/Screens/staff/home_screen_teacher.dart';
 import 'package:student_task_manager/component/google_sign_in.dart';
 import 'package:student_task_manager/constant.dart';
-import 'package:student_task_manager/Screens/EventScreen.dart';
-import 'package:student_task_manager/Screens/Home.dart';
-import 'package:student_task_manager/Screens/AddEvent.dart';
+import 'package:student_task_manager/Screens/student/EventScreen.dart';
+import 'package:student_task_manager/Screens/student/Home.dart';
+import 'package:student_task_manager/Screens/staff/AddEvent.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:student_task_manager/nyapp.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
-import 'Screens/test.dart';
+import 'Screens/staff/staff_timetable.dart';
+
 
 const AndroidNotificationChannel channel =
     AndroidNotificationChannel('high_importance_channel', 'High Importance',
@@ -60,16 +60,8 @@ void showFlutterNotification(RemoteMessage message) {
     );
   }
 }
-// class MyHttpOverrides extends HttpOverrides{
-//   @override
-//   HttpClient createHttpClient(SecurityContext? context){
-//     return super.createHttpClient(context)
-//       ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
-//   }
-// }
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // HttpOverrides.global = MyHttpOverrides();
   await Firebase.initializeApp();
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   await flutterLocalNotificationsPlugin
@@ -79,7 +71,6 @@ Future main() async {
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
       alert: true, badge: true, sound: true);
   String? token = await FirebaseMessaging.instance.getToken();
-  // print(token);
   to = token!;
   runApp(const MyApp());
 }
@@ -113,7 +104,6 @@ class _MyAppState extends State<MyApp> {
       
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
-      // AttendancePage();
 
       if (notification != null && android != null && !kIsWeb) {
         flutterLocalNotificationsPlugin.show(
@@ -176,63 +166,7 @@ class _MyAppState extends State<MyApp> {
           initialRoute: '/',
           routes: {
             '/':(context) => CommonWelcome(),
-            '/timeTable': (context) => StaffTimetable(timetable: {
-    "id": 24,
-    "staff": {
-      "staffId": "sugankpms",
-      "name": "sugankpms",
-      "mail": "sugankpms@gmail.com",
-      "mobile": "8477822052",
-      "classCode": "CSE",
-      "present": false,
-      "presentKt": false
-    },
-    "dayOne": [
-      "'Free",
-      "Free",
-      "JAVA",
-      "Free",
-      "Free",
-      "Free",
-      "Free'"
-    ],
-    "dayTwo": [
-      "'Free",
-      "Free",
-      "Free",
-      "Free",
-      "Free",
-      "Free",
-      "Free'"
-    ],
-    "dayThree": [
-      "'Free",
-      "Free",
-      "Free",
-      "Free",
-      "Free",
-      "Free",
-      "Free'"
-    ],
-    "dayFour": [
-      "'Free",
-      "Free",
-      "Free",
-      "Free",
-      "Free",
-      "Free",
-      "Free'"
-    ],
-    "dayFive": [
-      "'Free",
-      "Free",
-      "Free",
-      "Free",
-      "Free",
-      "Free",
-      "PCD'"
-    ]
-  },),
+            '/timeTable': (context) => StaffTimetable(timetable: {},),
             '/event': (context) => EventScreen(),
             '/eventte': (context) => EventScreenTeacher(),
             '/tescreen': (context) => HomeScreenTeacher(),
