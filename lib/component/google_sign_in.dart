@@ -30,7 +30,6 @@ class GoogleSignInProvider extends ChangeNotifier {
       var body = {"token": to};
       http.post(Uri.parse('$kURL/login/${googleUser.email}/${to}'), body: body);
       // print('$kURL/login/${googleUser.email}/${to}');
-      
     } catch (e) {
       print(e.toString());
     }

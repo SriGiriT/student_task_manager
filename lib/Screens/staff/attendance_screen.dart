@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'package:student_task_manager/Screens/student/EventScreen.dart';
 import 'dart:convert';
 import 'package:student_task_manager/constant.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -466,13 +465,13 @@ class _ReportGenerationState extends State<ReportGeneration> {
     var data = json.decode(response.body);
     code = [];
     persentage = [];
-    print(data);
-    print(data.runtimeType);
+    // print(data);
+    // print(data.runtimeType);
     for (dynamic i in data) {
       Map<String, dynamic> map = {};
       i.forEach((key, value) {
         code.add(key);
-        print("$key");
+        // print("$key");
         value.forEach((key1, value1) {
           map[key1] = value1;
         });
@@ -546,7 +545,7 @@ class _ReportGenerationState extends State<ReportGeneration> {
                     );
                     if (selectedTime != null) {
                       setState(() {
-                        print(selectedDateTime.toString());
+                        // print(selectedDateTime.toString());
                         widget.startDate = DateTime(
                             selectedDateTime.year,
                             selectedDateTime.month,

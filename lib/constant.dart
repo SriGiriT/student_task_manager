@@ -1,14 +1,8 @@
 import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
-import 'package:student_task_manager/Screens/staff/attendance_screen.dart';
 import 'package:intl/intl.dart';
 
 String kURL = "https://tidy-puma-7.telebit.io";
@@ -89,7 +83,6 @@ String timeText(String string) {
 Future<List<dynamic>> fetchData(User? user) async {
   final response = await http.post(Uri.parse(
       '$kURL/teacher/events/pending/${user!.email!.substring(0, user.email!.indexOf("@"))}'));
-  // print(response.body);
   if (response.statusCode == 200) {
     // If the call to the server was successful, parse the JSON
     List jsonResponse = json.decode(response.body);

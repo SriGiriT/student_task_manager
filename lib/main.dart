@@ -1,11 +1,7 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:student_task_manager/Screens/staff/attendance_screen.dart';
 import 'package:student_task_manager/Screens/common_welcome.dart';
@@ -16,7 +12,6 @@ import 'package:student_task_manager/constant.dart';
 import 'package:student_task_manager/Screens/student/EventScreen.dart';
 import 'package:student_task_manager/Screens/student/Home.dart';
 import 'package:student_task_manager/Screens/staff/AddEvent.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'Screens/staff/staff_timetable.dart';

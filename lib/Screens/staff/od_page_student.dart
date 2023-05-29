@@ -1,13 +1,10 @@
 import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:student_task_manager/component/google_sign_in.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'dart:typed_data';
 
 import '../../constant.dart';
 

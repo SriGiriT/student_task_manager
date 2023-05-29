@@ -1,20 +1,16 @@
 import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:student_task_manager/Screens/staff/AddEvent.dart';
 import 'package:student_task_manager/Screens/staff/attendance_screen.dart';
 import 'package:student_task_manager/Screens/staff/staff_timetable.dart';
-import 'package:student_task_manager/Screens/student/od_page_staffs.dart';
 import 'package:student_task_manager/Screens/staff/od_page_student.dart';
 import 'package:student_task_manager/component/google_sign_in.dart';
 import 'package:student_task_manager/constant.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -111,7 +107,7 @@ class _TeacherScreenState extends State<TeacherScreen> {
     });
     User? user = FirebaseAuth.instance.currentUser;
     final response = await http.post(Uri.parse(
-        '$kURL/staff/timetable/get/${user!.email!.substring(0, user!.email!.indexOf("@"))}'));
+        '$kURL/staff/timetable/get/${user!.email!.substring(0, user.email!.indexOf("@"))}'));
     // final response =
     //     await http.post(Uri.parse('$kURL/staff/timetable/get/sugankpms'));
     // print(DateTime.now().toString().substring(0, 10));

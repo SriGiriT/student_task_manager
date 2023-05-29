@@ -1,8 +1,5 @@
-import 'dart:convert';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'package:student_task_manager/Screens/staff/AddEvent.dart';
 import 'package:student_task_manager/Screens/student/EventScreen.dart';
