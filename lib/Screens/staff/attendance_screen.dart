@@ -501,6 +501,7 @@ class _ReportGenerationState extends State<ReportGeneration> {
     return Scaffold(
       backgroundColor: kPrimaryConstColor,
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Center(child: Text("Report")),
       ),
       body: Column(

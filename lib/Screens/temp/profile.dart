@@ -19,6 +19,7 @@ class Profile extends StatelessWidget {
     String idToken = provider.idToken;
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text('Profile'),
         centerTitle: true,
         actions: [

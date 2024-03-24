@@ -321,6 +321,7 @@ class _EventScreenTeacherState extends State<EventScreenTeacher> {
         child: Scaffold(
           backgroundColor: kMatColor,
           appBar: AppBar(
+            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
             leading: GestureDetector(
               child: Icon(
                 Icons.refresh,

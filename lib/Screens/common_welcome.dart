@@ -59,6 +59,7 @@ class _CommonWelcomeState extends State<CommonWelcome>
     if (_selectedPage == null) {
       return Scaffold(
         appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           title: Text("Welcome"),
           centerTitle: true,
         ),

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
-String kURL = "https://tidy-puma-7.telebit.io";
+String kURL = "https://possible-flamingo-large.ngrok-free.app";
 const kPrimaryColor = Color(0xFF1D1E33);
 const kPrimaryLightColor = Color(0xFF282E45);
 const kButtonColor = Color(0xFF111328);
@@ -43,12 +43,14 @@ class _DescriptionState extends State<Description> {
   @override
   Widget build(BuildContext context) {
     return Center(
-        child: Container(
-            child: Text(widget.descriptionData,
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold))));
+      child: Container(
+        child: Text(
+          widget.descriptionData,
+          style: TextStyle(
+              color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
   }
 }
 

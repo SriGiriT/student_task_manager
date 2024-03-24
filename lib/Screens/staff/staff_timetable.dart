@@ -10,6 +10,7 @@ class StaffTimetable extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(timetable['staff']['name'] + "'s Timetable"),
       ),
       body: Container(

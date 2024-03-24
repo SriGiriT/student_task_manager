@@ -30,6 +30,7 @@ class _StudentScreenState extends State<StudentScreen> {
     return Scaffold(
       backgroundColor: Color(0xFF0A0E21),
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Center(child: Text('Student Page')),
         actions: <Widget>[
           TextButton(

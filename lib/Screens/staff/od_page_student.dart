@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -35,8 +36,9 @@ class _ODListScreenState extends State<ODListScreen> {
         child: Scaffold(
           backgroundColor: kMatColor,
           appBar: AppBar(
+            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
             leading: GestureDetector(
-              child:const Icon(
+              child: const Icon(
                 Icons.refresh,
               ),
               onTap: () {
@@ -53,7 +55,7 @@ class _ODListScreenState extends State<ODListScreen> {
                         listen: false);
                     provider.logout();
                   },
-                  child:const Text(
+                  child: const Text(
                     "Logout",
                     style: TextStyle(color: Colors.white),
                   ))
@@ -82,7 +84,7 @@ class _ODListScreenState extends State<ODListScreen> {
                             if (await onBackPressed(
                                 context, "Are you sure want to cancel OD")) {
                               final response = await http.post(Uri.parse(
-                                  '$kURL/od/cancel/${snapshot.data![index]['id']}'));
+                                  '$kURL/od/cancel/${snapshot.data![index]['id']}/${user!.email!.substring(0, user!.email!.indexOf("@"))}'));
                               // print(response.body);
                               if (response.statusCode == 200) {
                                 // If the call to the server was successful, parse the JSON
@@ -106,12 +108,16 @@ class _ODListScreenState extends State<ODListScreen> {
                               isLoading = false;
                             });
                             String studentSet = "";
-                            for (Map<String, dynamic> x in snapshot.data![index]
+                            for (String x in snapshot.data![index]
                                 ['studentSet']) {
-                              x.forEach((key, value) {
-                                if (key == "rollNo") studentSet += value + ", ";
-                              });
+                              studentSet += x + ", ";
                             }
+                            // for (Map<String, dynamic> x in snapshot.data![index]
+                            //     ['studentSet']) {
+                            //   x.forEach((key, value) {
+                            //     if (key == "rollNo") studentSet += value + ", ";
+                            //   });
+                            // }
                             showModalBottomSheet(
                               context: context,
                               builder: (context) => SingleChildScrollView(
@@ -120,15 +126,19 @@ class _ODListScreenState extends State<ODListScreen> {
                                   height: 500,
                                   child: OdDetails(
                                     studentId: snapshot.data![index]
-                                            ['studentSet'][0]['rollNo']
+                                            ['studentSet'][0]
                                         .toString(),
-                                    studentName: snapshot.data![index]
-                                            ['studentSet'][0]['name']
-                                        .toString(),
-                                    documentImg: snapshot.data![index]
-                                        ['document'],
+                                    // studentName: snapshot.data![index]
+                                    //         ['studentSet'][0]
+                                    //     .toString(),
                                     description: snapshot.data![index]
                                         ['description'],
+                                    documentImg: (snapshot.data![index]
+                                                ['document'] !=
+                                            null)
+                                        ? snapshot.data![index]['document']
+                                            ['data']
+                                        : "",
                                     studentList: studentSet,
                                     fromDate: snapshot.data![index]['fromDate'],
                                     endDate: snapshot.data![index]['endDate'],
@@ -146,7 +156,15 @@ class _ODListScreenState extends State<ODListScreen> {
                             margin: EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               color: kPrimaryLightColor,
-                              border: Border.all(color: Colors.grey),
+                              border: Border.all(
+                                  width: 4,
+                                  color: snapshot.data![index]['canceledBy'] != null
+                                               && snapshot.data![index]['canceledBy'].length > 1
+                                      ? Colors.red.shade300
+                                      : (snapshot.data![index]['signatures'] != null && snapshot.data![index]['signatures'].length > 0
+                                                  )
+                                          ? Colors.green.shade300
+                                          : Colors.grey.shade200),
                               borderRadius: BorderRadius.circular(5),
                             ),
                             child: Column(
@@ -161,23 +179,18 @@ class _ODListScreenState extends State<ODListScreen> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                          
-                                            "${snapshot.data![index]['studentSet']
-                                                      [0]['name']
-                                                  .toString()}-${snapshot.data![index]['studentSet']
-                                                      [0]['rollNo']
-                                                  .toString()} ",
+                                          "${snapshot.data![index]['studentSet'][0].toString()}",
                                           style: TextStyle(
                                               color: Colors.orange.shade300,
                                               fontSize: 20,
                                               fontWeight: FontWeight.bold)),
-                                      Text(
-                                        snapshot.data![index]['id'].toString(),
-                                        style:const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold),
-                                      ),
+                                      // Text(
+                                      //   snapshot.data![index]['id'].toString(),
+                                      //   style: const TextStyle(
+                                      //       color: Colors.white,
+                                      //       fontSize: 20,
+                                      //       fontWeight: FontWeight.bold),
+                                      // ),
                                     ],
                                   ),
                                 ),
@@ -187,7 +200,7 @@ class _ODListScreenState extends State<ODListScreen> {
                                     alignment: Alignment.topLeft,
                                     child: Text(
                                       snapshot.data![index]['description'],
-                                      style:const TextStyle(
+                                      style: const TextStyle(
                                           color: Colors.blueAccent,
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold),
@@ -247,7 +260,7 @@ class _ODListScreenState extends State<ODListScreen> {
                                       ),
                                     ],
                                   ),
-                                ) 
+                                )
                               ],
                             ),
                           ),
@@ -280,8 +293,8 @@ class _ODListScreenState extends State<ODListScreen> {
   }
 
   Future<List<dynamic>> fetchData(User? user) async {
-    final response =
-        await http.post(Uri.parse('$kURL/od/list/${user!.email!.substring(0, user.email!.indexOf("@"))}'));
+    final response = await http.post(Uri.parse(
+        '$kURL/od/list/${user!.email!.substring(0, user.email!.indexOf("@"))}'));
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       return jsonResponse;
@@ -293,7 +306,6 @@ class _ODListScreenState extends State<ODListScreen> {
 
 class OdDetails extends StatefulWidget {
   String studentId;
-  String studentName;
   String? documentImg;
   String description;
   String fromDate;
@@ -301,7 +313,6 @@ class OdDetails extends StatefulWidget {
   String studentList;
   OdDetails(
       {required this.studentId,
-      required this.studentName,
       required this.documentImg,
       required this.description,
       required this.fromDate,
@@ -331,13 +342,6 @@ class _OdDetailsState extends State<OdDetails> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        widget.studentName,
-                        style: TextStyle(
-                            color: Colors.green.shade300,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18),
-                      ),
-                      Text(
                         widget.studentId,
                         style: TextStyle(
                             color: Colors.green.shade300,
@@ -360,7 +364,8 @@ class _OdDetailsState extends State<OdDetails> {
                     height: 8,
                   ),
                   Text(
-                    widget.studentList.substring(0, widget.studentList.length-2),
+                    widget.studentList
+                        .substring(0, widget.studentList.length - 2),
                     style: TextStyle(
                         color: Colors.blue,
                         fontWeight: FontWeight.bold,
@@ -405,6 +410,15 @@ class _OdDetailsState extends State<OdDetails> {
                       ),
                     ],
                   ),
+                  widget.documentImg != ""
+                      ? Container(
+                          child: Image.memory(
+                            base64Decode(widget.documentImg!),
+                            height: 400,
+                            width: 400,
+                          ),
+                        )
+                      : Container(),
                   // // TextField(controller: textEditingController,),
                   // Text(
                   //   widget.documentImg!.substring(40),

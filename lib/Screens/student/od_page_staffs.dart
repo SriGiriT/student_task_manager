@@ -124,6 +124,7 @@ class _OdStudentState extends State<OdStudent> {
       child: Scaffold(
         backgroundColor: Color(0xFF0A0E21),
         appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           title: Text('Apply OD'),
         ),
         body: Stack(alignment: Alignment.center, children: [

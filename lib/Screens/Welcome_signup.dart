@@ -19,7 +19,7 @@ class WelcomeScreenSignUp extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             const Text(
-              "STM",
+              "Campus Sync",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 48,

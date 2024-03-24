@@ -87,6 +87,7 @@ class _AddEventState extends State<AddEvent> {
     return Scaffold(
       backgroundColor: Color(0xFF0A0E21),
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Center(child: Text('Add Events')),
         actions: <Widget>[
           TextButton(
